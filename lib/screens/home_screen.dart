@@ -648,7 +648,10 @@ class _HomePageState extends State<HomePage> {
   try {
     var server = filteredServers[0];
     print('🔧 Parse: ${server['name']}');
-    print('   URL: ${server['config']!.substring(0, Math.min(50, server['config']!.length))}...');
+  String urlPreview = server['config']!.length > 50 
+    ? server['config']!.substring(0, 50) + '...'
+    : server['config']!;
+print('   URL: $urlPreview');
     
     final V2RayURL v2rayURL = FlutterV2ray.parseFromURL(server['config']!);
     configToConnect = v2rayURL.getFullConfiguration();
