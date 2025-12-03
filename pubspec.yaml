@@ -6,7 +6,6 @@ version: 5.5.0+7
 
 environment:
   sdk: '>=3.5.2 <4.0.0'
-  flutter: '>=3.0.0'
 
 dependencies:
   flutter:
@@ -14,19 +13,9 @@ dependencies:
 
   cupertino_icons: ^1.0.8
   dio: ^5.7.0
-  
-  # VPN Client - New
-  flutter_v2ray_client:
+  flutter_v2ray:
     git:
-      url: https://github.com/amir-zr/flutter_v2ray_client
-      ref: main
-  
-  # State Management  
-  flutter_riverpod: ^2.4.9
-  
-  # HTTP
-  http: ^1.1.0
-  
+      url: https://github.com/motad-dev/flutter_v2ray
   url_launcher: ^6.3.0
   flutter_launcher_icons: ^0.13.1
   awesome_dialog: ^3.2.1
