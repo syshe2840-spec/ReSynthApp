@@ -13,7 +13,7 @@ import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
+import 'package:flutter_v2ray_client/flutter_v2ray_client.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -29,12 +29,17 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  var v2rayStatus = ValueNotifier<V2RayStatus>(V2RayStatus());
-  late final FlutterV2ray flutterV2ray = FlutterV2ray(
-    onStatusChanged: (status) {
-      v2rayStatus.value = status;
-    },
-  );
+  // V2Ray Client
+  late final V2RayClient v2rayClient;
+  String connectionState = 'DISCONNECTED'; // DISCONNECTED, CONNECTING, CONNECTED, ERROR
+  Timer? _statsTimer;
+  
+  // Stats
+  int uploadSpeed = 0;
+  int downloadSpeed = 0;
+  int upload = 0;
+  int download = 0;
+  String duration = '00:00:00';
 
   bool proxyOnly = false;
   List<String> bypassSubnets = [];
@@ -52,26 +57,104 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    v2rayClient = V2RayClient();
     getVersionName();
     _loadServerSelection();
-    flutterV2ray
-        .initializeV2Ray(
-      notificationIconResourceType: "mipmap",
-      notificationIconResourceName: "launcher_icon",
-    )
-        .then((value) async {
-      coreVersion = await flutterV2ray.getCoreVersion();
+    _checkConnectionState();
+    coreVersion = 'V2Ray Core';
+    setState(() {});
+  }
 
-      setState(() {});
-      Future.delayed(
-        Duration(seconds: 1),
-        () {
-          if (v2rayStatus.value.state == 'CONNECTED') {
-            delay();
+  // چک کردن وضعیت اتصال هر 1 ثانیه
+  void _checkConnectionState() {
+    Timer.periodic(Duration(seconds: 1), (timer) async {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      
+      try {
+        final state = await v2rayClient.getState();
+        
+        if (state != connectionState) {
+          setState(() {
+            connectionState = state;
+          });
+          
+          // اگر متصل شد، شروع مانیتورینگ
+          if (state == 'connected') {
+            _startStatsMonitoring();
+            Future.delayed(Duration(seconds: 2), () {
+              delay();
+            });
+          } else if (state == 'disconnected') {
+            _stopStatsMonitoring();
+            setState(() {
+              connectedServerDelay = null;
+            });
           }
-        },
-      );
+        }
+      } catch (e) {
+        print('Error checking state: $e');
+      }
     });
+  }
+
+  // مانیتورینگ آمار
+  void _startStatsMonitoring() {
+    _statsTimer?.cancel();
+    
+    _statsTimer = Timer.periodic(Duration(seconds: 1), (timer) async {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      
+      try {
+        final stats = await v2rayClient.getStats();
+        
+        setState(() {
+          upload = stats.upload;
+          download = stats.download;
+          uploadSpeed = stats.upload;
+          downloadSpeed = stats.download;
+          
+          // محاسبه Duration
+          int seconds = stats.duration;
+          int hours = seconds ~/ 3600;
+          int minutes = (seconds % 3600) ~/ 60;
+          int secs = seconds % 60;
+          duration = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+        });
+        
+      } catch (e) {
+        print('Error getting stats: $e');
+      }
+    });
+  }
+
+  void _stopStatsMonitoring() {
+    _statsTimer?.cancel();
+    _statsTimer = null;
+    setState(() {
+      upload = 0;
+      download = 0;
+      uploadSpeed = 0;
+      downloadSpeed = 0;
+      duration = '00:00:00';
+    });
+  }
+
+  // ساخت V2RayStatus شبیه‌ساز برای سازگاری با Widget های قدیمی
+  V2RayStatus _createMockStatus() {
+    return V2RayStatus(
+      state: connectionState.toUpperCase(),
+      upload: upload.toString(),
+      download: download.toString(),
+      uploadSpeed: uploadSpeed.toString(),
+      downloadSpeed: downloadSpeed.toString(),
+      duration: duration,
+    );
   }
 
   @override
@@ -120,9 +203,9 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: Center(
-                child: ValueListenableBuilder(
-                  valueListenable: v2rayStatus,
-                  builder: (context, value, child) {
+                child: Builder(
+                  builder: (context) {
+                    final value = _createMockStatus();
                     final size = MediaQuery.sizeOf(context);
                     final bool isWideScreen = size.width > 600;
                     return isWideScreen
@@ -274,7 +357,22 @@ class _HomePageState extends State<HomePage> {
     if (value.state == "DISCONNECTED") {
       getDomain();
     } else {
-      flutterV2ray.stopV2Ray();
+      // قطع اتصال
+      setState(() {
+        isLoading = true;
+      });
+      
+      try {
+        await v2rayClient.disconnect();
+        _stopStatsMonitoring();
+        print('✅ اتصال قطع شد');
+      } catch (e) {
+        print('❌ خطا در قطع اتصال: $e');
+      }
+      
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -288,7 +386,7 @@ class _HomePageState extends State<HomePage> {
         return ServerSelectionModal(
           selectedServer: selectedServer,
           onServerSelected: (server) {
-            if (v2rayStatus.value.state == "DISCONNECTED") {
+            if (connectionState == "DISCONNECTED") {
               String logoPath = server == 'Automatic'
                   ? 'assets/lottie/auto.json'
                   : 'assets/lottie/server.json';
@@ -583,163 +681,110 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-
-
-
-
-
-
   Future<void> connect(List<Map<String, String>> serverList) async {
-  if (serverList.isEmpty) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.tr('error_no_server_connected')),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-    setState(() {
-      isLoading = false;
-    });
-    return;
-  }
-
-  setState(() {
-    isLoading = true;
-  });
-
-  List<Map<String, String>> filteredServers = [];
-
-  // 🎯 فیلتر کردن سرورها
-  if (selectedServer == 'Automatic') {
-    if (serverList.isNotEmpty) {
-      filteredServers.add(serverList[0]);
-      print('🔄 Automatic mode - انتخاب اولین سرور: ${serverList[0]['name']}');
-    }
-  } else {
-    var found = serverList.where((s) => s['name'] == selectedServer).toList();
-    if (found.isNotEmpty) {
-      filteredServers.add(found[0]);
-      print('✅ سرور انتخاب شده: ${found[0]['name']}');
-    } else {
-      print('❌ سرور "$selectedServer" پیدا نشد!');
-    }
-  }
-
-  if (filteredServers.isEmpty) {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('سرور "$selectedServer" موجود نیست'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-    setState(() {
-      isLoading = false;
-    });
-    return;
-  }
-
-  print('📡 شروع Parse کانفیگ...');
-
-  // تبدیل URL به کانفیگ
-  String? configToConnect;
-  
-  try {
-    var server = filteredServers[0];
-    print('🔧 Parse: ${server['name']}');
-    
-    // نمایش کامل کانفیگ
-    print('📄 کانفیگ کامل:');
-    print('   ${server['config']}');
-    
-    // Parse کردن
-    final V2RayURL v2rayURL = FlutterV2ray.parseFromURL(server['config']!);
-    configToConnect = v2rayURL.getFullConfiguration();
-    
-    print('✅ Parse موفق: ${server['name']}');
-    print('📊 جزئیات Parse شده:');
-    print('   - طول کانفیگ نهایی: ${configToConnect.length} chars');
-    
-    // نمایش 200 کاراکتر اول کانفیگ نهایی
-    String configPreview = configToConnect.length > 200 
-        ? configToConnect.substring(0, 200) + '...'
-        : configToConnect;
-    print('   - کانفیگ نهایی: $configPreview');
-    
-  } catch (e, stackTrace) {
-    print('❌ خطا در Parse: $e');
-    print('📚 StackTrace:');
-    print(stackTrace.toString());
-    
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('خطا در پردازش کانفیگ: $e'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-    }
-    setState(() {
-      isLoading = false;
-    });
-    return;
-  }
-
-  // 🚀 اتصال مستقیم
-  if (configToConnect != null && configToConnect.isNotEmpty) {
-    print('🚀 شروع اتصال...');
-    
-    try {
-      if (await flutterV2ray.requestPermission()) {
-        print('✅ دسترسی VPN داده شد');
-        
-        print('🔌 در حال اتصال به V2Ray...');
-        await flutterV2ray.startV2Ray(
-          remark: context.tr('app_title'),
-          config: configToConnect,
-          proxyOnly: false,
-          bypassSubnets: null,
-          notificationDisconnectButtonName: context.tr('disconnect_btn'),
-          blockedApps: blockedApps,
+    if (serverList.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(context.tr('error_no_server_connected')),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
-        
-        print('✅ V2Ray service شروع شد');
-        print('⏳ منتظر اتصال...');
-        
-        // صبر کن تا متصل بشه
-        await Future.delayed(Duration(seconds: 2));
-        
-        // چک کردن وضعیت
-        print('🔍 چک وضعیت اتصال:');
-        print('   - State: ${v2rayStatus.value.state}');
-        print('   - Duration: ${v2rayStatus.value.duration}');
-        
-        if (v2rayStatus.value.state == 'CONNECTED') {
-          print('🎉 اتصال برقرار شد!');
-          
-          // تست ping
-          await Future.delayed(Duration(seconds: 1));
-          int? ping = await flutterV2ray.getConnectedServerDelay();
-          print('📶 Ping: ${ping ?? "N/A"} ms');
-          
-        } else {
-          print('⚠️ هنوز در حال اتصال... (${v2rayStatus.value.state})');
-        }
-        
-      } else {
-        print('❌ دسترسی VPN رد شد');
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.tr('error_permission')),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
       }
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    List<Map<String, String>> filteredServers = [];
+
+    // 🎯 فیلتر کردن سرورها
+    if (selectedServer == 'Automatic') {
+      if (serverList.isNotEmpty) {
+        filteredServers.add(serverList[0]);
+        print('🔄 Automatic mode - انتخاب اولین سرور: ${serverList[0]['name']}');
+      }
+    } else {
+      var found = serverList.where((s) => s['name'] == selectedServer).toList();
+      if (found.isNotEmpty) {
+        filteredServers.add(found[0]);
+        print('✅ سرور انتخاب شده: ${found[0]['name']}');
+      } else {
+        print('❌ سرور "$selectedServer" پیدا نشد!');
+      }
+    }
+
+    if (filteredServers.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('سرور "$selectedServer" موجود نیست'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    print('📡 شروع Parse کانفیگ...');
+
+    try {
+      var server = filteredServers[0];
+      print('🔧 Parse: ${server['name']}');
+      print('📄 کانفیگ کامل:');
+      print('   ${server['config']}');
+      
+      // Parse با API جدید
+      final v2rayUrl = V2RayURL.parse(server['config']!);
+      final config = v2rayUrl.config;
+      
+      print('✅ Parse موفق: ${server['name']}');
+      print('📊 جزئیات Parse شده:');
+      print('   - Protocol: ${config['outbounds'][0]['protocol']}');
+      
+      // درخواست دسترسی
+      print('🚀 شروع اتصال...');
+      final permissionGranted = await v2rayClient.requestPermission();
+      
+      if (!permissionGranted) {
+        throw Exception('VPN permission denied');
+      }
+      
+      print('✅ دسترسی VPN داده شد');
+      print('🔌 در حال اتصال به V2Ray...');
+      
+      // اتصال
+      await v2rayClient.connect(
+        config: config,
+        proxyOnly: false,
+      );
+      
+      print('✅ V2Ray service شروع شد');
+      print('⏳ منتظر اتصال...');
+      
+      // صبر برای اتصال
+      await Future.delayed(Duration(seconds: 2));
+      
+      final state = await v2rayClient.getState();
+      print('🔍 وضعیت اتصال: $state');
+      
+      if (state == 'connected') {
+        print('🎉 اتصال برقرار شد!');
+        
+        // تست Ping
+        Future.delayed(Duration(seconds: 2), () {
+          delay();
+        });
+      }
+      
     } catch (e, stackTrace) {
       print('❌ خطا در اتصال: $e');
       print('📚 StackTrace:');
@@ -753,45 +798,77 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       }
+      
+      try {
+        await v2rayClient.disconnect();
+      } catch (_) {}
     }
+
+    setState(() {
+      isLoading = false;
+    });
   }
 
-  Future.delayed(Duration(seconds: 3), () {
-    delay();
-  });
-
-  setState(() {
-    isLoading = false;
-  });
-}
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-  
-
-   
   void delay() async {
-    if (v2rayStatus.value.state == 'CONNECTED') {
-      connectedServerDelay = await flutterV2ray.getConnectedServerDelay();
-      setState(() {
-        isFetchingPing = true;
-      });
+    if (connectionState == 'connected') {
+      try {
+        // دریافت کانفیگ فعلی
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? serverListJson = prefs.getString('servers_list');
+        
+        if (serverListJson != null) {
+          List<dynamic> serverList = jsonDecode(serverListJson);
+          
+          var server = serverList.firstWhere(
+            (s) => s['name'] == selectedServer,
+            orElse: () => serverList[0],
+          );
+          
+          final v2rayUrl = V2RayURL.parse(server['config']);
+          final config = v2rayUrl.config;
+          
+          int ping = await v2rayClient.delay(config);
+          
+          setState(() {
+            connectedServerDelay = ping;
+            isFetchingPing = true;
+          });
+          
+          print('📶 Ping: $ping ms');
+        }
+      } catch (e) {
+        print('⚠️ Ping failed: $e');
+        setState(() {
+          connectedServerDelay = null;
+        });
+      }
     }
     if (!mounted) return;
   }
+
+  @override
+  void dispose() {
+    _stopStatsMonitoring();
+    v2rayClient.dispose();
+    super.dispose();
+  }
+}
+
+// کلاس V2RayStatus برای سازگاری با Widget های قدیمی
+class V2RayStatus {
+  final String state;
+  final String upload;
+  final String download;
+  final String uploadSpeed;
+  final String downloadSpeed;
+  final String duration;
+
+  V2RayStatus({
+    this.state = 'DISCONNECTED',
+    this.upload = '0',
+    this.download = '0',
+    this.uploadSpeed = '0',
+    this.downloadSpeed = '0',
+    this.duration = '00:00:00',
+  });
 }
