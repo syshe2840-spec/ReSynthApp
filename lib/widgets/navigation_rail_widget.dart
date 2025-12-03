@@ -1,6 +1,6 @@
+import 'package:begzar/screens/home_screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_v2ray/flutter_v2ray.dart';
 import 'package:iconsax/iconsax.dart';
 import 'dart:math';
 import 'dart:io';
@@ -9,7 +9,7 @@ import 'package:dio/io.dart';
 
 class NavigationRailWidget extends StatefulWidget {
   final int selectedIndex;
-  final ValueNotifier<V2RayStatus> singStatus;
+  final ValueNotifier<V2RayStatus>? singStatus;
   final Function(int) onDestinationSelected;
 
   NavigationRailWidget({
@@ -111,7 +111,6 @@ class _NavigationRailWidgetState extends State<NavigationRailWidget> {
           ),
           const Spacer(),
           _buildNavItems(isExtraWideScreen),
-          // const SizedBox(height: 16),
         ],
       ),
     );
