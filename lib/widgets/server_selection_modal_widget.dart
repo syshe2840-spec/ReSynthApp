@@ -5,9 +5,11 @@ import 'package:lottie/lottie.dart';
 class ServerSelectionModal extends StatelessWidget {
   final String selectedServer;
   final Function(String) onServerSelected;
-
-  ServerSelectionModal(
-      {required this.selectedServer, required this.onServerSelected});
+  
+  ServerSelectionModal({
+    required this.selectedServer, 
+    required this.onServerSelected
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,8 @@ class ServerSelectionModal extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20),
+            
+            // Automatic
             ListTile(
               leading: Lottie.asset('assets/lottie/auto.json', width: 30),
               title: Text('Automatic'),
@@ -35,8 +39,9 @@ class ServerSelectionModal extends StatelessWidget {
               onTap: () => onServerSelected('Automatic'),
             ),
             Divider(),
+            
+            // Server 1
             ListTile(
-              // leading: Icon(Icons.flag, color: Colors.white, size: 32),
               leading: Lottie.asset('assets/lottie/server.json', width: 32),
               title: Text(
                 'Server 1',
@@ -47,6 +52,8 @@ class ServerSelectionModal extends StatelessWidget {
                   : null,
               onTap: () => onServerSelected('Server 1'),
             ),
+            
+            // Server 2
             ListTile(
               leading: Lottie.asset('assets/lottie/server.json', width: 32),
               title: Text(
@@ -57,6 +64,19 @@ class ServerSelectionModal extends StatelessWidget {
                   ? Icon(Icons.check, color: Colors.green)
                   : null,
               onTap: () => onServerSelected('Server 2'),
+            ),
+            
+            // Server 3 - جدید اضافه شد
+            ListTile(
+              leading: Lottie.asset('assets/lottie/server.json', width: 32),
+              title: Text(
+                'Server 3',
+                style: TextStyle(fontFamily: 'GM'),
+              ),
+              trailing: selectedServer == 'Server 3'
+                  ? Icon(Icons.check, color: Colors.green)
+                  : null,
+              onTap: () => onServerSelected('Server 3'),
             ),
           ],
         ),
