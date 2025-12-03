@@ -278,59 +278,63 @@ class _HomePageState extends State<HomePage> {
       flutterV2ray.stopV2Ray();
     }
   }
-
-  void _showServerSelectionModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-      ),
-      builder: (BuildContext context) {
-        return ServerSelectionModal(
-          selectedServer: selectedServer,
-          onServerSelected: (server) {
-            if (v2rayStatus.value.state == "DISCONNECTED") {
-              String? logoPath;
-              if (server == 'Automatic') {
-                logoPath = 'assets/lottie/auto.json';
-              } else if (server == 'Server 1') {
-                logoPath = 'assets/lottie/server.json';
-              } else if (server == 'Server 2') {
-                logoPath = 'assets/lottie/server.json';
-              }
-              setState(() {
-                selectedServer = server;
-              });
-              _saveServerSelection(server, logoPath!);
-              Navigator.pop(context);
-            } else {
-              if (mounted) {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      context.tr('error_change_server'),
-                    ),
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-              }
+void _showServerSelectionModal(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+    ),
+    builder: (BuildContext context) {
+      return ServerSelectionModal(
+        selectedServer: selectedServer,
+        onServerSelected: (server) {
+          if (v2rayStatus.value.state == "DISCONNECTED") {
+            String? logoPath;
+            if (server == 'Automatic') {
+              logoPath = 'assets/lottie/auto.json';
+            } else if (server == 'Server 1') {
+              logoPath = 'assets/lottie/server.json';
+            } else if (server == 'Server 2') {
+              logoPath = 'assets/lottie/server.json';
+            } else if (server == 'Server 3') {  // اضافه شد
+              logoPath = 'assets/lottie/server.json';
             }
-          },
-        );
-      },
-    );
-  }
+            setState(() {
+              selectedServer = server;
+            });
+            _saveServerSelection(server, logoPath!);
+            Navigator.pop(context);
+          } else {
+            if (mounted) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    context.tr('error_change_server'),
+                  ),
+                  behavior: SnackBarBehavior.floating,
+                ),
+              );
+            }
+          }
+        },
+      );
+    },
+  );
+}
+  
 
-  String getServerParam() {
-    if (selectedServer == 'Server 1') {
-      return 'server_1';
-    } else if (selectedServer == 'Server 2') {
-      return 'server_2';
-    } else {
-      return 'auto';
-    }
+String getServerParam() {
+  if (selectedServer == 'Server 1') {
+    return 'server_1';
+  } else if (selectedServer == 'Server 2') {
+    return 'server_2';
+  } else if (selectedServer == 'Server 3') {  // اضافه شد
+    return 'server_3';
+  } else {
+    return 'auto';
   }
+}
 
   Future<void> _loadServerSelection() async {
     _prefs = await SharedPreferences.getInstance();
