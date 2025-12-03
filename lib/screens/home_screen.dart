@@ -5,21 +5,20 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:begzar/common/cha.dart';
 import 'package:begzar/common/http_client.dart';
 import 'package:begzar/common/secure_storage.dart';
-import 'package:begzar/widgets/connection_widget.dart';
-import 'package:begzar/widgets/server_selection_modal_widget.dart';
-import 'package:begzar/widgets/vpn_status.dart';
+import 'package:begzar/common/ios_theme.dart';
+import 'package:begzar/widgets/ios_connection_widget.dart';
+import 'package:begzar/widgets/ios_server_selection_modal.dart';
+import 'package:begzar/widgets/ios_vpn_card.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_v2ray/flutter_v2ray.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../common/theme.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -81,43 +80,66 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: isWideScreen ? null : _buildAppBar(isWideScreen),
-      backgroundColor: const Color(0xff192028),
+      backgroundColor: IOSColors.systemGroupedBackground,
       body: SafeArea(
         child: Column(
           children: [
+            // iOS-style Server Selector
             GestureDetector(
               onTap: () => _showServerSelectionModal(context),
               child: Container(
                 margin: const EdgeInsets.all(16),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF2A2A2A),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.withOpacity(0.1)),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 10,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
-                    Lottie.asset(
-                      selectedServerLogo ?? 'assets/lottie/auto.json',
-                      width: 24,
-                      height: 24,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      selectedServer,
-                      style: TextStyle(
-                        color: Colors.grey[300],
-                        fontSize: 16,
-                        fontFamily: 'GM',
+                    Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: IOSColors.systemBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Center(
+                        child: Lottie.asset(
+                          selectedServerLogo ?? 'assets/lottie/auto.json',
+                          width: 20,
+                          height: 20,
+                        ),
                       ),
                     ),
-                    const Spacer(),
-                    Icon(Icons.keyboard_arrow_down, color: Colors.grey[400]),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        selectedServer,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: -0.41,
+                        ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.black.withOpacity(0.3),
+                      size: 20,
+                    ),
                   ],
                 ),
               ),
             ),
+            
             Expanded(
               child: Center(
                 child: ValueListenableBuilder(
@@ -138,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        ConnectionWidget(
+                                        IOSConnectionWidget(
                                           onTap: () =>
                                               _handleConnectionTap(value),
                                           isLoading: isLoading,
@@ -153,11 +175,11 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   if (value.state == 'CONNECTED') ...[
                                     Expanded(
-                                      child: VpnCard(
-                                        download: value.download,
-                                        upload: value.upload,
-                                        downloadSpeed: value.downloadSpeed,
-                                        uploadSpeed: value.uploadSpeed,
+                                      child: IOSVpnCard(
+                                        download: int.parse(value.download),
+                                        upload: int.parse(value.upload),
+                                        downloadSpeed: int.parse(value.downloadSpeed),
+                                        uploadSpeed: int.parse(value.uploadSpeed),
                                         selectedServer: selectedServer,
                                         selectedServerLogo:
                                             selectedServerLogo ??
@@ -173,7 +195,7 @@ class _HomePageState extends State<HomePage> {
                         : Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              ConnectionWidget(
+                              IOSConnectionWidget(
                                 onTap: () => _handleConnectionTap(value),
                                 isLoading: isLoading,
                                 status: value.state,
@@ -181,12 +203,12 @@ class _HomePageState extends State<HomePage> {
                               if (value.state == 'CONNECTED') ...[
                                 const SizedBox(height: 16),
                                 _buildDelayIndicator(),
-                                const SizedBox(height: 60),
-                                VpnCard(
-                                  download: value.download,
-                                  upload: value.upload,
-                                  downloadSpeed: value.downloadSpeed,
-                                  uploadSpeed: value.uploadSpeed,
+                                const SizedBox(height: 32),
+                                IOSVpnCard(
+                                  download: int.parse(value.download),
+                                  upload: int.parse(value.upload),
+                                  downloadSpeed: int.parse(value.downloadSpeed),
+                                  uploadSpeed: int.parse(value.uploadSpeed),
                                   selectedServer: selectedServer,
                                   selectedServerLogo: selectedServerLogo ??
                                       'assets/lottie/auto.json',
@@ -210,8 +232,10 @@ class _HomePageState extends State<HomePage> {
       title: Text(
         context.tr('app_title'),
         style: TextStyle(
-          color: ThemeColor.foregroundColor,
-          fontSize: isWideScreen ? 22 : 18,
+          color: IOSColors.label,
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+          letterSpacing: -0.41,
         ),
       ),
       actions: [
@@ -219,53 +243,55 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(8.0),
           child: Image.asset(
             'assets/images/logo_transparent.png',
-            color: ThemeColor.foregroundColor,
-            height: 50,
+            color: IOSColors.systemBlue,
+            height: 32,
           ),
         ),
       ],
       automaticallyImplyLeading: !isWideScreen,
       centerTitle: true,
-      backgroundColor: ThemeColor.backgroundColor,
+      backgroundColor: IOSColors.systemBackground,
       elevation: 0,
     );
   }
 
   Widget _buildDelayIndicator() {
     return Container(
-      margin: const EdgeInsets.only(top: 0),
-      width: connectedServerDelay == null ? 50 : 90,
-      height: 30,
-      child: Center(
-        child: connectedServerDelay == null
-            ? LoadingAnimationWidget.fallingDot(
-                color: const Color.fromARGB(255, 214, 182, 0),
-                size: 35,
-              )
-            : _buildDelayDisplay(),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-    );
-  }
-
-  Widget _buildDelayDisplay() {
-    return SizedBox(
-      height: 50,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: delay,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(CupertinoIcons.wifi, color: Colors.white, size: 16),
-            const SizedBox(width: 8),
-            Text(
-              connectedServerDelay.toString(),
-              style: TextStyle(fontFamily: 'GM'),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (connectedServerDelay == null)
+            CupertinoActivityIndicator(radius: 10)
+          else ...[
+            Icon(
+              CupertinoIcons.wifi,
+              color: IOSColors.systemGreen,
+              size: 16,
             ),
-            const SizedBox(width: 4),
-            const Text('ms'),
+            const SizedBox(width: 6),
+            Text(
+              '${connectedServerDelay}ms',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.24,
+                color: Colors.black,
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -281,11 +307,10 @@ class _HomePageState extends State<HomePage> {
   void _showServerSelectionModal(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
-      ),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (BuildContext context) {
-        return ServerSelectionModal(
+        return IOSServerSelectionModal(
           selectedServer: selectedServer,
           onServerSelected: (server) {
             if (v2rayStatus.value.state == "DISCONNECTED") {
@@ -368,12 +393,8 @@ class _HomePageState extends State<HomePage> {
         blockedApps = prefs.getStringList('blockedApps') ?? [];
       });
 
-      // 🔥 مستقیم به Cloudflare Worker وصل میشیم
       domainName = 'begzar-api.lastofanarchy.workers.dev';
-
-      // 🔄 رفرش لیست سرورها قبل از اتصال
       await _refreshServerList();
-
       checkUpdate();
     } on TimeoutException catch (e) {
       if (mounted) {
@@ -402,7 +423,6 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // 🔄 تابع رفرش لیست سرورها
   Future<void> _refreshServerList() async {
     try {
       String userKey = await storage.read(key: 'user') ?? '';
@@ -419,7 +439,6 @@ class _HomePageState extends State<HomePage> {
         await storage.write(key: 'user', value: userKey);
       }
 
-      // دریافت لیست سرورها
       final response = await Dio().get(
         "https://$domainName/api/firebase/init/data/$userKey",
         options: Options(
@@ -435,7 +454,6 @@ class _HomePageState extends State<HomePage> {
           servers.add({'name': server['name'], 'config': server['config']});
         }
 
-        // ذخیره لیست جدید
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('servers_list', jsonEncode(servers));
       }
@@ -446,7 +464,6 @@ class _HomePageState extends State<HomePage> {
 
   void checkUpdate() async {
     try {
-      // 🔑 دریافت یا ساخت User Key
       String userKey = await storage.read(key: 'user') ?? '';
       if (userKey == '') {
         final response = await Dio()
@@ -470,7 +487,6 @@ class _HomePageState extends State<HomePage> {
         await storage.write(key: 'user', value: key);
       }
 
-      // 📡 دریافت لیست سرورها
       final response = await Dio()
           .get(
         "https://$domainName/api/firebase/init/data/$userKey",
@@ -492,7 +508,6 @@ class _HomePageState extends State<HomePage> {
         final version = dataJson['version'];
         final updateUrl = dataJson['updated_url'];
 
-        // 🔥 دریافت سرورها با نام
         List<dynamic> serversJson = dataJson['servers'];
         List<Map<String, String>> servers = [];
 
@@ -500,15 +515,12 @@ class _HomePageState extends State<HomePage> {
           servers.add({'name': server['name'], 'config': server['config']});
         }
 
-        // ذخیره لیست سرورها
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('servers_list', jsonEncode(servers));
 
-        // ✅ چک ورژن
         if (version == versionName) {
           await connect(servers);
         } else {
-          // 🔄 نمایش دیالوگ آپدیت
           if (updateUrl.isNotEmpty) {
             AwesomeDialog(
               context: context,
@@ -605,7 +617,6 @@ class _HomePageState extends State<HomePage> {
 
     List<Map<String, String>> filteredServers = [];
 
-    // 🎯 فیلتر کردن سرورها
     if (selectedServer == 'Automatic') {
       filteredServers = serverList;
       print('🔄 Automatic mode - تست ${serverList.length} سرور');
@@ -638,7 +649,6 @@ class _HomePageState extends State<HomePage> {
 
     print('📡 شروع Parse کانفیگ‌ها...');
 
-    // تبدیل URL به کانفیگ
     for (var server in filteredServers) {
       try {
         print('🔧 Parse: ${server['name']}');
@@ -671,7 +681,6 @@ class _HomePageState extends State<HomePage> {
 
     print('📊 تعداد کانفیگ‌های آماده: ${configList.length}');
 
-    // 🚀 اگر فقط یک سرور انتخاب شده
     if (configList.length == 1) {
       print('🚀 اتصال مستقیم به سرور...');
       String bestConfig = configList[0];
@@ -711,7 +720,6 @@ class _HomePageState extends State<HomePage> {
         }
       }
     } else {
-      // 🎯 Automatic mode - تست ping
       print('🎯 Automatic mode - شروع تست ping...');
 
       try {
