@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:begzar/common/ios_theme.dart';
 
 class AboutScreen extends StatefulWidget {
   AboutScreen({super.key});
@@ -31,240 +32,256 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff192028),
+      backgroundColor: IOSColors.systemGroupedBackground,
       appBar: AppBar(
-        backgroundColor: const Color(0xff192028),
+        backgroundColor: IOSColors.systemBackground,
         elevation: 0,
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () => Navigator.pop(context),
+          child: Icon(
+            CupertinoIcons.back,
+            color: IOSColors.systemBlue,
+          ),
+        ),
         title: Text(
           context.tr('about'),
-          style: const TextStyle(
-            fontFamily: 'sb',
-            fontSize: 18,
+          style: TextStyle(
+            color: IOSColors.label,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.41,
           ),
         ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 40),
-              // Logo Container with Animation
-              TweenAnimationBuilder(
-                duration: const Duration(seconds: 1),
-                tween: Tween<double>(begin: 0, end: 1),
-                builder: (context, double value, child) {
-                  return Transform.scale(
-                    scale: value,
-                    child: Container(
-                      width: 120,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF2A2A2A),
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 15,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Image.asset(
-                          'assets/images/logo.png',
-                          width: 80,
-                          height: 80,
-                        ),
-                      ),
-                    ),
-                  );
-                },
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            
+            // Logo Container
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: IOSColors.secondarySystemGroupedBackground,
+                borderRadius: BorderRadius.circular(26),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-              const SizedBox(height: 24),
-
-              // App Name with Animation
-              TweenAnimationBuilder(
-                duration: const Duration(milliseconds: 800),
-                tween: Tween<double>(begin: 0, end: 1),
-                builder: (context, double value, child) {
-                  return Opacity(
-                    opacity: value,
-                    child: Text(
-                      context.tr('app_title'),
-                      style: const TextStyle(
-                        fontSize: 32,
-                        fontFamily: 'sb',
-                        color: Colors.white,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-              if (version != null)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      context.tr('version_title'),
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                    Text(
-                      ' : $version',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontFamily: 'GM',
-                        color: Colors.grey[400],
-                      ),
-                    ),
-                  ],
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(26),
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    width: 80,
+                    height: 80,
+                  ),
                 ),
-              const SizedBox(height: 30),
+              ),
+            ),
+            const SizedBox(height: 16),
 
-              // Contact Cards
-              _buildContactCard(
-                icon: Iconsax.wallet,
-                title: 'TON Wallet',
-                onTap: () {
-                  Clipboard.setData(const ClipboardData(text: "UQDrQ59AyNvwH96R7wHl8-VqVFhWqoliujMpelbs2aR-LWr1"))
-                      .then(
-                    (_) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            context.tr('wallet_address_copied'),
-                          ),
+            // App Name
+            Text(
+              context.tr('app_title'),
+              style: IOSTypography.title1.copyWith(
+                color: IOSColors.label,
+              ),
+            ),
+            const SizedBox(height: 4),
+            
+            // Version
+            if (version != null)
+              Text(
+                '${context.tr('version_title')} : $version',
+                style: IOSTypography.subheadline.copyWith(
+                  color: IOSColors.secondaryLabel,
+                ),
+              ),
+            
+            const SizedBox(height: 32),
+
+            // Links Section
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: IOSColors.secondarySystemGroupedBackground,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  _buildIOSListTile(
+                    icon: CupertinoIcons.creditcard,
+                    iconColor: IOSColors.systemPurple,
+                    title: 'TON Wallet',
+                    showDivider: true,
+                    onTap: () {
+                      Clipboard.setData(
+                        const ClipboardData(
+                          text: "UQDrQ59AyNvwH96R7wHl8-VqVFhWqoliujMpelbs2aR-LWr1",
                         ),
+                      ).then((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              context.tr('wallet_address_copied'),
+                              style: IOSTypography.body,
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        );
+                      });
+                    },
+                  ),
+                  _buildIOSListTile(
+                    icon: CupertinoIcons.mail,
+                    iconColor: IOSColors.systemBlue,
+                    title: 'info@begzar.xyz',
+                    showDivider: true,
+                    onTap: () async {
+                      final Uri emailLaunchUri = Uri(
+                        scheme: 'mailto',
+                        path: 'info@begzar.xyz',
+                      );
+                      await launchUrl(emailLaunchUri);
+                    },
+                  ),
+                  _buildIOSListTile(
+                    icon: CupertinoIcons.square_on_square,
+                    iconColor: IOSColors.label,
+                    title: 'Github',
+                    showDivider: true,
+                    onTap: () async {
+                      await launchUrl(
+                        Uri.parse('https://github.com/Begzar/BegzarApp'),
+                        mode: LaunchMode.externalApplication,
                       );
                     },
-                  );
-                },
-              ),
-              _buildContactCard(
-                icon: Iconsax.message,
-                title: context.tr('email'),
-                onTap: () async {
-                  final Uri emailLaunchUri = Uri(
-                    scheme: 'mailto',
-                    path: 'info@begzar.xyz',
-                  );
-                  await launchUrl(emailLaunchUri);
-                },
-              ),
-              _buildContactCard(
-                icon: Iconsax.message_programming,
-                title: 'Github',
-                onTap: () async {
-                  await launchUrl(
-                      Uri.parse('https://github.com/Begzar/BegzarApp'),
-                      mode: LaunchMode.externalApplication);
-                },
-              ),
-              _buildContactCard(
-                icon: Iconsax.message_circle,
-                title: context.tr('telegram_channel'),
-                onTap: () async {
-                  await launchUrl(Uri.parse('https://t.me/BegzarVPN'),
-                      mode: LaunchMode.externalApplication);
-                },
-              ),
-
-              const SizedBox(height: 40),
-
-              // Description
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF2A2A2A),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.withOpacity(0.1)),
-                ),
-                child: Text(
-                  context.tr('about_description'),
-                  style: TextStyle(
-                    fontSize: 14,
-                    height: 1.5,
-                    fontFamily: 'sm',
-                    color: Colors.grey[300],
                   ),
-                  textAlign: TextAlign.center,
-                ),
+                  _buildIOSListTile(
+                    icon: CupertinoIcons.chat_bubble,
+                    iconColor: IOSColors.systemBlue,
+                    title: context.tr('telegram_channel'),
+                    showDivider: false,
+                    onTap: () async {
+                      await launchUrl(
+                        Uri.parse('https://t.me/BegzarVPN'),
+                        mode: LaunchMode.externalApplication,
+                      );
+                    },
+                  ),
+                ],
               ),
+            ),
 
-              const SizedBox(height: 24),
-              Text(
-                context.tr('copyright'),
-                style: TextStyle(
-                  fontSize: 12,
-                  fontFamily: 'GM',
-                  color: Colors.grey[600],
+            const SizedBox(height: 32),
+
+            // Description
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: IOSColors.secondarySystemGroupedBackground,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                context.tr('about_description'),
+                style: IOSTypography.footnote.copyWith(
+                  color: IOSColors.secondaryLabel,
+                  height: 1.5,
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 24),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 24),
+            
+            // Copyright
+            Text(
+              context.tr('copyright'),
+              style: IOSTypography.caption1.copyWith(
+                color: IOSColors.tertiaryLabel,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 40),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildContactCard({
+  Widget _buildIOSListTile({
     required IconData icon,
+    required Color iconColor,
     required String title,
+    required bool showDivider,
     required VoidCallback onTap,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            decoration: BoxDecoration(
-              color: const Color(0xFF2A2A2A),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.withOpacity(0.1)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF353535),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(icon, color: Colors.grey[400], size: 24),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: 'sm',
-                      color: Colors.grey[300],
+    return Column(
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: iconColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Icon(
+                      icon,
+                      size: 18,
+                      color: iconColor,
                     ),
                   ),
-                ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.grey[600],
-                  size: 16,
-                ),
-              ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: IOSTypography.body.copyWith(
+                        color: IOSColors.label,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    CupertinoIcons.forward,
+                    size: 20,
+                    color: IOSColors.tertiaryLabel,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
+        if (showDivider)
+          Padding(
+            padding: const EdgeInsets.only(left: 56),
+            child: Divider(
+              height: 1,
+              thickness: 0.5,
+              color: IOSColors.separator,
+            ),
+          ),
+      ],
     );
   }
 }
