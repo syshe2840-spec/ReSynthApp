@@ -373,35 +373,82 @@ Future<void> getDomain() async {
     
     // 🔥 مستقیم به Cloudflare Worker وصل میشیم
     domainName = 'begzar-api.lastofanarchy.workers.dev';
+    
+    // 🔄 رفرش لیست سرورها قبل از اتصال
+    await _refreshServerList();
+    
     checkUpdate();
-    } on TimeoutException catch (e) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              e.message!,
-            ),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.tr('error_domain')),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
+  } on TimeoutException catch (e) {
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message!),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  } catch (e) {
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.tr('error_domain')),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
+}
+
+// 🔄 تابع رفرش لیست سرورها
+Future<void> _refreshServerList() async {
+  try {
+    String userKey = await storage.read(key: 'user') ?? '';
+    
+    if (userKey == '') {
+      final response = await Dio().get(
+        "https://$domainName/api/firebase/init/android",
+        options: Options(
+          headers: {'X-Content-Type-Options': 'nosniff'},
+        ),
+      ).timeout(Duration(seconds: 8));
+      
+      userKey = response.data['key'];
+      await storage.write(key: 'user', value: userKey);
+    }
+
+    // دریافت لیست سرورها
+    final response = await Dio().get(
+      "https://$domainName/api/firebase/init/data/$userKey",
+      options: Options(
+        headers: {'X-Content-Type-Options': 'nosniff'},
+      ),
+    ).timeout(Duration(seconds: 8));
+
+    if (response.data['status'] == true) {
+      List<dynamic> serversJson = response.data['servers'];
+      List<Map<String, String>> servers = [];
+      
+      for (var server in serversJson) {
+        servers.add({
+          'name': server['name'],
+          'config': server['config']
+        });
+      }
+      
+      // ذخیره لیست جدید
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('servers_list', jsonEncode(servers));
+    }
+  } catch (e) {
+    print('Error refreshing server list: $e');
+  }
+}
 
   String decrypt(String secureData, String x1, String x2, String key) {
     final encryptedData = {
