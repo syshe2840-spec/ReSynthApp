@@ -278,7 +278,9 @@ class _HomePageState extends State<HomePage> {
       flutterV2ray.stopV2Ray();
     }
   }
-void _showServerSelectionModal(BuildContext context) {
+
+
+  void _showServerSelectionModal(BuildContext context) {
   showModalBottomSheet(
     context: context,
     shape: const RoundedRectangleBorder(
@@ -289,20 +291,14 @@ void _showServerSelectionModal(BuildContext context) {
         selectedServer: selectedServer,
         onServerSelected: (server) {
           if (v2rayStatus.value.state == "DISCONNECTED") {
-            String? logoPath;
-            if (server == 'Automatic') {
-              logoPath = 'assets/lottie/auto.json';
-            } else if (server == 'Server 1') {
-              logoPath = 'assets/lottie/server.json';
-            } else if (server == 'Server 2') {
-              logoPath = 'assets/lottie/server.json';
-            } else if (server == 'Server 3') {  // اضافه شد
-              logoPath = 'assets/lottie/server.json';
-            }
+            String logoPath = server == 'Automatic' 
+                ? 'assets/lottie/auto.json' 
+                : 'assets/lottie/server.json';
+            
             setState(() {
               selectedServer = server;
             });
-            _saveServerSelection(server, logoPath!);
+            _saveServerSelection(server, logoPath);
             Navigator.pop(context);
           } else {
             if (mounted) {
