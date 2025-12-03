@@ -1,9 +1,9 @@
-import 'package:begzar/common/theme.dart';
+import 'package:begzar/common/ios_theme.dart';
 import 'package:begzar/widgets/settings/blocked_apps_widget.dart';
 import 'package:begzar/widgets/settings/language_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_ui/flutter_settings_ui.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsWidget extends StatefulWidget {
@@ -22,7 +22,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
     _loadSelectedLanguage();
   }
 
-  // بارگذاری زبان از SharedPreferences
   void _loadSelectedLanguage() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -36,91 +35,169 @@ class _SettingsWidgetState extends State<SettingsWidget> {
       appBar: AppBar(
         title: Text(
           context.tr('setting'),
-          style: TextStyle(color: ThemeColor.foregroundColor, fontSize: 18),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Image.asset(
-              'assets/images/logo_transparent.png',
-              color: ThemeColor.foregroundColor,
-              height: 50,
-            ),
+          style: TextStyle(
+            color: IOSColors.label,
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.41,
           ),
-        ],
-        backgroundColor: ThemeColor.backgroundColor,
+        ),
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () => Navigator.pop(context),
+          child: Icon(
+            CupertinoIcons.back,
+            color: IOSColors.systemBlue,
+          ),
+        ),
+        backgroundColor: IOSColors.systemBackground,
         elevation: 0,
+        centerTitle: true,
       ),
-      backgroundColor: ThemeColor.backgroundColor,
-      body: SettingsList(
-        contentPadding: EdgeInsets.all(20),
-        brightness: Brightness.dark,
-        darkTheme: SettingsThemeData(
-          settingsSectionBackground: Color(0xff192028),
-          settingsListBackground: Color(0xff192028),
-        ),
-        sections: [
-          SettingsSection(
-            title: Text(
-              context.tr('blocking_settings'),
-              style: TextStyle(fontFamily: 'sm'),
-            ),
-            tiles: [
-              SettingsTile.navigation(
-                title: Text(
-                  context.tr('block_application'),
-                  style: TextStyle(fontFamily: 'sb'),
-                ),
-                leading: Icon(Icons.block),
-                description: Text(
-                  context.tr('block_detail'),
-                  style: TextStyle(fontFamily: 'sm', fontSize: 12),
-                ),
-                onPressed: (context) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => BlockedAppsWidgets(),
-                    ),
-                  );
-                },
+      backgroundColor: IOSColors.systemGroupedBackground,
+      body: ListView(
+        physics: BouncingScrollPhysics(),
+        children: [
+          const SizedBox(height: 32),
+          
+          // Blocking Settings Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              context.tr('blocking_settings').toUpperCase(),
+              style: IOSTypography.caption1.copyWith(
+                color: IOSColors.secondaryLabel,
+                letterSpacing: 0.5,
               ),
-            ],
-          ),
-          SettingsSection(
-            title: Text(
-              context.tr('language_settings'),
-              style: TextStyle(fontFamily: 'sm'),
             ),
-            tiles: [
-              SettingsTile.navigation(
-                title: Text(
-                  context.tr('language'),
-                  style: TextStyle(fontFamily: 'sb'),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: IOSColors.secondarySystemGroupedBackground,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: _buildIOSSettingsTile(
+              icon: CupertinoIcons.slash_circle,
+              iconColor: IOSColors.systemRed,
+              title: context.tr('block_application'),
+              subtitle: context.tr('block_detail'),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => BlockedAppsWidgets(),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 32),
+          
+          // Language Settings Section
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text(
+              context.tr('language_settings').toUpperCase(),
+              style: IOSTypography.caption1.copyWith(
+                color: IOSColors.secondaryLabel,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: IOSColors.secondarySystemGroupedBackground,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: _buildIOSSettingsTile(
+              icon: CupertinoIcons.globe,
+              iconColor: IOSColors.systemBlue,
+              title: context.tr('language'),
+              subtitle: _selectedLanguage,
+              onTap: () {
+                Navigator.of(context)
+                    .push(
+                  MaterialPageRoute(
+                    builder: (context) => LanguageWidget(
+                      selectedLanguage: _selectedLanguage!,
+                    ),
+                  ),
+                )
+                    .then((value) {
+                  _loadSelectedLanguage();
+                });
+              },
+            ),
+          ),
+          
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIOSSettingsTile({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    String? subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                leading: Icon(Icons.language),
-                description: _selectedLanguage != null
-                    ? Text(
-                        _selectedLanguage!,
-                        style: TextStyle(fontFamily: 'sm', fontSize: 12),
-                      )
-                    : null,
-                onPressed: (context) {
-                  Navigator.of(context)
-                      .push(
-                    MaterialPageRoute(
-                      builder: (context) => LanguageWidget(
-                        selectedLanguage: _selectedLanguage!,
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: iconColor,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: IOSTypography.body.copyWith(
+                        color: IOSColors.label,
                       ),
                     ),
-                  )
-                      .then((value) {
-                    _loadSelectedLanguage();
-                  });
-                },
+                    if (subtitle != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: IOSTypography.footnote.copyWith(
+                          color: IOSColors.secondaryLabel,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              Icon(
+                CupertinoIcons.forward,
+                size: 20,
+                color: IOSColors.tertiaryLabel,
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
