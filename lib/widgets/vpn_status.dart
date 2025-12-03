@@ -4,24 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class VpnCard extends StatefulWidget {
-  final int downloadSpeed;
-  final int uploadSpeed;
+  final String downloadSpeed;  // تغییر از int به String
+  final String uploadSpeed;    // تغییر از int به String
   final String selectedServer;
   final String selectedServerLogo;
   final String duration;
+  final String download;       // تغییر از int به String
+  final String upload;         // تغییر از int به String
 
-  final int download;
-  final int upload;
-
-  const VpnCard(
-      {super.key,
-      required this.downloadSpeed,
-      required this.uploadSpeed,
-      required this.download,
-      required this.upload,
-      required this.selectedServer,
-      required this.selectedServerLogo,
-      required this.duration});
+  const VpnCard({
+    super.key,
+    required this.downloadSpeed,
+    required this.uploadSpeed,
+    required this.download,
+    required this.upload,
+    required this.selectedServer,
+    required this.selectedServerLogo,
+    required this.duration,
+  });
 
   @override
   State<VpnCard> createState() => _VpnCardState();
@@ -31,6 +31,7 @@ class _VpnCardState extends State<VpnCard> {
   String? ipText;
   String? ipflag;
   bool isLoading = false;
+  
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -125,14 +126,14 @@ class _VpnCardState extends State<VpnCard> {
                   children: [
                     _buildStatColumn(
                       icon: Icons.data_usage_rounded,
-                      download: formatBytes(widget.downloadSpeed),
-                      upload: formatBytes(widget.uploadSpeed),
+                      download: formatBytes(_parseInt(widget.downloadSpeed)),
+                      upload: formatBytes(_parseInt(widget.uploadSpeed)),
                       status: context.tr('realtime_usage'),
                     ),
                     _buildStatColumn(
                       icon: Icons.wifi_rounded,
-                      download: formatSpeedBytes(widget.download),
-                      upload: formatSpeedBytes(widget.upload),
+                      download: formatSpeedBytes(_parseInt(widget.download)),
+                      upload: formatSpeedBytes(_parseInt(widget.upload)),
                       status: context.tr('total_usage'),
                     ),
                   ],
@@ -143,6 +144,15 @@ class _VpnCardState extends State<VpnCard> {
         ),
       ],
     );
+  }
+
+  // تابع کمکی برای تبدیل String به int
+  int _parseInt(String value) {
+    try {
+      return int.parse(value);
+    } catch (e) {
+      return 0;
+    }
   }
 
   String formatBytes(int bytes) {
@@ -186,12 +196,23 @@ class _VpnCardState extends State<VpnCard> {
           borderRadius: BorderRadius.circular(12),
           onTap: () async {
             setState(() => isLoading = true);
-            final ipInfo = await getIpApi();
-            setState(() {
-              ipflag = countryCodeToFlagEmoji(ipInfo['countryCode']!);
-              ipText = ipInfo['ip'];
-              isLoading = false;
-            });
+            try {
+              final ipInfo = await getIpApi();
+              if (mounted) {
+                setState(() {
+                  ipflag = countryCodeToFlagEmoji(ipInfo['countryCode']!);
+                  ipText = ipInfo['ip'];
+                  isLoading = false;
+                });
+              }
+            } catch (e) {
+              print('Error getting IP: $e');
+              if (mounted) {
+                setState(() {
+                  isLoading = false;
+                });
+              }
+            }
           },
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
