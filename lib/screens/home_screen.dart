@@ -386,43 +386,116 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getDomain() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      setState(() {
-        isLoading = true;
-        blockedApps = prefs.getStringList('blockedApps') ?? [];
-      });
+  try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      isLoading = true;
+      blockedApps = prefs.getStringList('blockedApps') ?? [];
+    });
 
-      domainName = 'begzar-api.lastofanarchy.workers.dev';
-      await _refreshServerList();
-      checkUpdate();
-    } on TimeoutException catch (e) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.message!),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.tr('error_domain')),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+    domainName = 'begzar-api.lastofanarchy.workers.dev';
+    
+    // ✅ چک کردن آخرین آپدیت سرورها
+    String? lastUpdate = prefs.getString('last_server_update');
+    bool shouldUpdate = false;
+    
+    if (lastUpdate == null) {
+      // اولین بار است
+      shouldUpdate = true;
+    } else {
+      try {
+        DateTime lastUpdateTime = DateTime.parse(lastUpdate);
+        Duration difference = DateTime.now().difference(lastUpdateTime);
+        
+        // اگر بیشتر از 24 ساعت گذشته باشد
+        if (difference.inHours >= 24) {
+          shouldUpdate = true;
+          print('🔄 24 ساعت گذشته، آپدیت سرورها...');
+        } else {
+          print('✅ سرورها تازه هستند (${difference.inHours} ساعت قبل)');
+        }
+      } catch (e) {
+        shouldUpdate = true;
       }
     }
+    
+    // ✅ آپدیت سرورها اگر نیاز باشد
+    if (shouldUpdate) {
+      await _refreshServerList();
+    }
+    
+    checkUpdate();
+  } on TimeoutException catch (e) {
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message!),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  } catch (e) {
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.tr('error_domain')),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
   }
+}
 
+// ✅ تابع رفرش سرورها با ذخیره تاریخ
+Future<void> _refreshServerList() async {
+  try {
+    String userKey = await storage.read(key: 'user') ?? '';
+
+    if (userKey == '') {
+      final response = await Dio().get(
+        "https://$domainName/api/firebase/init/android",
+        options: Options(
+          headers: {'X-Content-Type-Options': 'nosniff'},
+        ),
+      ).timeout(Duration(seconds: 8));
+
+      userKey = response.data['key'];
+      await storage.write(key: 'user', value: userKey);
+    }
+
+    final response = await Dio().get(
+      "https://$domainName/api/firebase/init/data/$userKey",
+      options: Options(
+        headers: {'X-Content-Type-Options': 'nosniff'},
+      ),
+    ).timeout(Duration(seconds: 8));
+
+    if (response.data['status'] == true) {
+      List<dynamic> serversJson = response.data['servers'];
+      List<Map<String, String>> servers = [];
+
+      for (var server in serversJson) {
+        servers.add({'name': server['name'], 'config': server['config']});
+      }
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('servers_list', jsonEncode(servers));
+      
+      // ✅ ذخیره تاریخ آپدیت
+      await prefs.setString('last_server_update', DateTime.now().toIso8601String());
+      
+      print('✅ سرورها آپدیت شدند: ${DateTime.now()}');
+    }
+  } catch (e) {
+    print('❌ خطا در رفرش سرورها: $e');
+  }
+}
   Future<void> _refreshServerList() async {
     try {
       String userKey = await storage.read(key: 'user') ?? '';
