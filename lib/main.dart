@@ -17,7 +17,6 @@ void main() async {
   if (isJailBroken != true) {
     await EasyLocalization.ensureInitialized();
     
-    // iOS-style system UI
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
@@ -30,14 +29,11 @@ void main() async {
       EasyLocalization(
         supportedLocales: [
           Locale('en', 'US'),
-          Locale('fa', 'IR'),
-          Locale('zh', 'CN'),
-          Locale('ru', 'RU'),
         ],
         path: 'assets/translations',
         fallbackLocale: Locale('en', 'US'),
         startLocale: Locale('en', 'US'),
-        saveLocale: true,
+        saveLocale: false,
         child: MyApp(),
       ),
     );
@@ -68,7 +64,6 @@ class _MyAppState extends State<MyApp> {
       title: 'Begzar VPN',
       debugShowCheckedModeBanner: false,
       
-      // iOS Theme
       theme: IOSTheme.lightTheme.copyWith(
         textTheme: TextTheme(
           titleLarge: defaultTextStyle.copyWith(fontSize: 28, fontWeight: FontWeight.w700),
@@ -144,7 +139,6 @@ class _RootScreenState extends State<RootScreen> {
         ],
       ),
       
-      // iOS-style Bottom Navigation
       bottomNavigationBar: !isWideScreen
           ? Container(
               decoration: BoxDecoration(
