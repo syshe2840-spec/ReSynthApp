@@ -27,9 +27,7 @@ void main() async {
     
     runApp(
       EasyLocalization(
-        supportedLocales: [
-          Locale('en', 'US'),
-        ],
+        supportedLocales: [Locale('en', 'US')],
         path: 'assets/translations',
         fallbackLocale: Locale('en', 'US'),
         startLocale: Locale('en', 'US'),
@@ -49,11 +47,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final defaultTextStyle = TextStyle(
       fontFamily: 'sm',
@@ -63,7 +56,6 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'Begzar VPN',
       debugShowCheckedModeBanner: false,
-      
       theme: IOSTheme.lightTheme.copyWith(
         textTheme: TextTheme(
           titleLarge: defaultTextStyle.copyWith(fontSize: 28, fontWeight: FontWeight.w700),
@@ -77,7 +69,6 @@ class _MyAppState extends State<MyApp> {
           labelSmall: defaultTextStyle.copyWith(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ),
-      
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
@@ -138,7 +129,6 @@ class _RootScreenState extends State<RootScreen> {
           ),
         ],
       ),
-      
       bottomNavigationBar: !isWideScreen
           ? Container(
               decoration: BoxDecoration(
@@ -156,18 +146,9 @@ class _RootScreenState extends State<RootScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _buildNavItem(
-                        icon: Iconsax.setting,
-                        index: 0,
-                      ),
-                      _buildNavItem(
-                        icon: Iconsax.home,
-                        index: 1,
-                      ),
-                      _buildNavItem(
-                        icon: Iconsax.info_circle,
-                        index: 2,
-                      ),
+                      _buildNavItem(icon: Iconsax.setting, index: 0),
+                      _buildNavItem(icon: Iconsax.home, index: 1),
+                      _buildNavItem(icon: Iconsax.info_circle, index: 2),
                     ],
                   ),
                 ),
@@ -177,10 +158,7 @@ class _RootScreenState extends State<RootScreen> {
     );
   }
 
-  Widget _buildNavItem({
-    required IconData icon,
-    required int index,
-  }) {
+  Widget _buildNavItem({required IconData icon, required int index}) {
     final isSelected = _selectedIndex == index;
     
     return Expanded(
