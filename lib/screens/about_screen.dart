@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:begzar/common/ios_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -25,7 +24,6 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
     super.initState();
     _getVersion();
 
-    // Logo animation
     _logoAnimationController = AnimationController(
       duration: Duration(milliseconds: 800),
       vsync: this,
@@ -81,7 +79,6 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
               children: [
                 const SizedBox(height: 20),
 
-                // Logo with tap animation
                 GestureDetector(
                   onTap: _animateLogo,
                   child: AnimatedBuilder(
@@ -122,7 +119,6 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
 
                 const SizedBox(height: 24),
 
-                // App Name
                 Text(
                   context.tr('app_title'),
                   style: TextStyle(
@@ -134,23 +130,19 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
 
                 const SizedBox(height: 10),
 
-                // Version - English numbers only
                 if (version != null)
-                  Directionality(
+                  Text(
+                    'Version : $version',
                     textDirection: TextDirection.ltr,
-                    child: Text(
-                      'Version : $version',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: IOSColors.secondaryLabel,
-                      ),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: IOSColors.secondaryLabel,
                     ),
                   ),
 
                 const SizedBox(height: 30),
 
-                // Contact Cards
                 _buildContactCard(
                   icon: CupertinoIcons.creditcard,
                   title: 'TON Wallet',
@@ -204,7 +196,6 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
 
                 const SizedBox(height: 30),
 
-                // Description
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -232,16 +223,14 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
 
                 const SizedBox(height: 24),
 
-                Directionality(
+                Text(
+                  context.tr('copyright'),
                   textDirection: TextDirection.ltr,
-                  child: Text(
-                    context.tr('copyright'),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: IOSColors.tertiaryLabel,
-                    ),
-                    textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: IOSColors.tertiaryLabel,
                   ),
+                  textAlign: TextAlign.center,
                 ),
 
                 const SizedBox(height: 24),
