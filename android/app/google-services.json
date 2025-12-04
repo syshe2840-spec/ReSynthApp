@@ -1,37 +1,26 @@
 {
   "project_info": {
-    "project_number": "123456789000",
-    "firebase_url": "https://begzar-dummy.firebaseio.com",
-    "project_id": "begzar-dummy",
-    "storage_bucket": "begzar-dummy.appspot.com"
+    "project_number": "399888049122",
+    "project_id": "resynth-b44bb",
+    "storage_bucket": "resynth-b44bb.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:123456789000:android:abc123def456",
+        "mobilesdk_app_id": "1:399888049122:android:14469b86a2f9d8ea034fbb",
         "android_client_info": {
-          "package_name": "cloud.begzar.begzar"
+          "package_name": "com.resynth.vpn"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "123456789000-abc123def456ghi789.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDummyKeyForBuildPurposesOnly123456"
+          "current_key": "AIzaSyCh9lSSlqM-Olm0ghsFyomxIjYaWmdnp-8"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "123456789000-abc123def456ghi789.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
