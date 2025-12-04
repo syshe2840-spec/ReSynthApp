@@ -1,9 +1,11 @@
 import 'package:resynth/common/ios_theme.dart';
+import 'package:resynth/common/firebase_tracker.dart';
 import 'package:resynth/screens/about_screen.dart';
 import 'package:resynth/screens/home_screen.dart';
 import 'package:resynth/screens/settings_screen.dart';
 import 'package:resynth/widgets/navigation_rail_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,6 +19,16 @@ void main() async {
 
   // Force English locale for numbers
   Intl.defaultLocale = 'en_US';
+
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp();
+    // Initialize user tracking
+    await FirebaseTracker.initUser();
+    await FirebaseTracker.trackAppOpen();
+  } catch (e) {
+    print('Firebase initialization error: $e');
+  }
 
   bool isJailBroken = await SafeDevice.isJailBroken;
   if (isJailBroken != true) {
