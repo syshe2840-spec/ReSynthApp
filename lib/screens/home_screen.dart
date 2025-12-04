@@ -255,7 +255,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
 
             Expanded(
-              child: Center(
+              child: Align(
+                alignment: Alignment(0, -0.15), // Slightly above center for better positioning
                 child: ValueListenableBuilder(
                   valueListenable: v2rayStatus,
                   builder: (context, value, child) {
