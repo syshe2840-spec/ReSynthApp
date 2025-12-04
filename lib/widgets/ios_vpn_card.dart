@@ -127,7 +127,6 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
                       SizedBox(width: 6),
                       Text(
                         widget.duration,
-                        textDirection: TextDirection.ltr,
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -212,7 +211,6 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
             ],
             Text(
               ipText ?? context.tr('show_ip'),
-              textDirection: TextDirection.ltr,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -280,7 +278,6 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
               SizedBox(width: 4),
               Text(
                 download,
-                textDirection: TextDirection.ltr,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -302,7 +299,6 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
               SizedBox(width: 4),
               Text(
                 upload,
-                textDirection: TextDirection.ltr,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
