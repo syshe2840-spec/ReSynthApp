@@ -38,24 +38,24 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(16),
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: Offset(0, 4),
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 15,
+            offset: Offset(0, 3),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -63,21 +63,21 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
                 Row(
                   children: [
                     Container(
-                      width: 44,
-                      height: 44,
+                      width: 36,
+                      height: 36,
                       decoration: BoxDecoration(
                         color: Color(0xFF007AFF).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
                         child: Lottie.asset(
                           widget.selectedServerLogo,
-                          width: 28,
-                          height: 28,
+                          width: 22,
+                          height: 22,
                         ),
                       ),
                     ),
-                    SizedBox(width: 12),
+                    SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +85,7 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
                           Text(
                             widget.selectedServer,
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.41,
                               color: Colors.black,
@@ -95,7 +95,7 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
                           Text(
                             'Connected',
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 12,
                               fontWeight: FontWeight.w400,
                               letterSpacing: -0.08,
                               color: Color(0xFF34C759),
@@ -107,12 +107,12 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
                     _buildIPButton(),
                   ],
                 ),
-                
-                SizedBox(height: 20),
-                
+
+                SizedBox(height: 14),
+
                 // Duration Badge
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
                     color: Color(0xFFF2F2F7),
                     borderRadius: BorderRadius.circular(8),
@@ -122,14 +122,14 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
                     children: [
                       Icon(
                         CupertinoIcons.clock,
-                        size: 16,
+                        size: 14,
                         color: Color(0xFF007AFF),
                       ),
-                      SizedBox(width: 6),
+                      SizedBox(width: 5),
                       Text(
                         toEnglishDigits(widget.duration),
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.w600,
                           letterSpacing: -0.24,
                           color: Colors.black,
@@ -139,8 +139,8 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
                     ],
                   ),
                 ),
-                
-                SizedBox(height: 20),
+
+                SizedBox(height: 14),
                 
                 // Stats
                 Row(
@@ -176,9 +176,9 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
 
   Widget _buildIPButton() {
     return CupertinoButton(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       minSize: 0,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(6),
       color: Color(0xFFF2F2F7),
       onPressed: isLoading ? null : () async {
         setState(() => isLoading = true);
@@ -201,19 +201,19 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (isLoading)
-            CupertinoActivityIndicator(radius: 8)
+            CupertinoActivityIndicator(radius: 6)
           else ...[
             if (ipflag != null) ...[
               Text(
                 ipflag!,
-                style: TextStyle(fontSize: 14),
+                style: TextStyle(fontSize: 12),
               ),
-              SizedBox(width: 6),
+              SizedBox(width: 4),
             ],
             Text(
               ipText ?? context.tr('show_ip'),
               style: TextStyle(
-                fontSize: 13,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
                 letterSpacing: -0.08,
                 color: Colors.black.withOpacity(0.6),
@@ -233,10 +233,10 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
     required Color color,
   }) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: color.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: color.withOpacity(0.2),
           width: 1,
@@ -250,14 +250,14 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
               Icon(
                 icon,
                 color: color,
-                size: 20,
+                size: 16,
               ),
-              SizedBox(width: 6),
+              SizedBox(width: 5),
               Expanded(
                 child: Text(
                   title,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 10,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.07,
                     color: Colors.black.withOpacity(0.6),
@@ -268,44 +268,52 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          SizedBox(height: 10),
           Row(
             children: [
               Icon(
                 CupertinoIcons.arrow_down,
-                size: 14,
+                size: 12,
                 color: Colors.black.withOpacity(0.4),
               ),
-              SizedBox(width: 4),
-              Text(
-                download,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.24,
-                  color: Colors.black,
-                  fontFeatures: [FontFeature.tabularFigures()],
+              SizedBox(width: 3),
+              Flexible(
+                child: Text(
+                  download,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.24,
+                    color: Colors.black,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 4),
+          SizedBox(height: 3),
           Row(
             children: [
               Icon(
                 CupertinoIcons.arrow_up,
-                size: 14,
+                size: 12,
                 color: Colors.black.withOpacity(0.4),
               ),
-              SizedBox(width: 4),
-              Text(
-                upload,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.24,
-                  color: Colors.black,
-                  fontFeatures: [FontFeature.tabularFigures()],
+              SizedBox(width: 3),
+              Flexible(
+                child: Text(
+                  upload,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.24,
+                    color: Colors.black,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -334,9 +342,9 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
     if (bytes <= 0) return '0.00 MB/s';
     const int mb = 1024 * 1024;
     double megabytes = bytes / mb;
-    // Use explicit English locale to force English digits
-    final formatter = NumberFormat('#0.00', 'en_US');
-    return '${formatter.format(megabytes)} MB/s';
+    // Always convert to English digits
+    String result = megabytes.toStringAsFixed(2);
+    return '${toEnglishDigits(result)} MB/s';
   }
 
   // Format for total usage - auto-scales without /s with English numbers
@@ -346,20 +354,20 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
     const int mb = kb * 1024;
     const int gb = mb * 1024;
 
-    // Use explicit English locale for all formatters
+    // Always convert to English digits
     if (bytes < kb) {
-      return '$bytes B';
+      return '${toEnglishDigits('$bytes')} B';
     }
     if (bytes < mb) {
-      final formatter = NumberFormat('#0.0', 'en_US');
-      return '${formatter.format(bytes / kb)} KB';
+      String result = (bytes / kb).toStringAsFixed(1);
+      return '${toEnglishDigits(result)} KB';
     }
     if (bytes < gb) {
-      final formatter = NumberFormat('#0.0', 'en_US');
-      return '${formatter.format(bytes / mb)} MB';
+      String result = (bytes / mb).toStringAsFixed(1);
+      return '${toEnglishDigits(result)} MB';
     }
-    final formatter = NumberFormat('#0.00', 'en_US');
-    return '${formatter.format(bytes / gb)} GB';
+    String result = (bytes / gb).toStringAsFixed(2);
+    return '${toEnglishDigits(result)} GB';
   }
 }
 
