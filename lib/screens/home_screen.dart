@@ -173,6 +173,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
+  String _toEnglishDigits(String input) {
+    const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+
+    String result = input;
+    for (int i = 0; i < 10; i++) {
+      result = result.replaceAll(persian[i], english[i]);
+      result = result.replaceAll(arabic[i], english[i]);
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
@@ -401,7 +414,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
               const SizedBox(width: 6),
               Text(
-                '${connectedServerDelay}ms',
+                _toEnglishDigits('${connectedServerDelay}ms'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
@@ -518,9 +531,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       // Auto-refresh server list on first launch and every 24 hours
       String? lastUpdate = prefs.getString('last_server_update');
       bool shouldUpdate = false;
+      bool isFirstLaunch = prefs.getBool('is_first_launch') ?? true;
 
-      if (lastUpdate == null) {
+      if (isFirstLaunch || lastUpdate == null) {
         shouldUpdate = true;
+        await prefs.setBool('is_first_launch', false);
       } else {
         try {
           DateTime lastUpdateTime = DateTime.parse(lastUpdate);
