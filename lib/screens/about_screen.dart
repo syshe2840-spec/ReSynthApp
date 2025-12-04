@@ -36,14 +36,7 @@ class _AboutScreenState extends State<AboutScreen> {
       appBar: AppBar(
         backgroundColor: IOSColors.systemBackground,
         elevation: 0,
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () => Navigator.pop(context),
-          child: Icon(
-            CupertinoIcons.back,
-            color: IOSColors.systemBlue,
-          ),
-        ),
+        automaticallyImplyLeading: false, // ✅ حذف دکمه Back
         title: Text(
           context.tr('about'),
           style: TextStyle(
