@@ -4,7 +4,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:begzar/common/ios_theme.dart';
 
 class IOSVpnCard extends StatefulWidget {
   final int downloadSpeed;
@@ -30,240 +29,148 @@ class IOSVpnCard extends StatefulWidget {
   State<IOSVpnCard> createState() => _IOSVpnCardState();
 }
 
-class _IOSVpnCardState extends State<IOSVpnCard> with TickerProviderStateMixin {
+class _IOSVpnCardState extends State<IOSVpnCard> {
   String? ipText;
   String? ipflag;
   bool isLoading = false;
-  late AnimationController _shimmerController;
-
-  @override
-  void initState() {
-    super.initState();
-    _shimmerController = AnimationController(
-      vsync: this,
-      duration: Duration(seconds: 2),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _shimmerController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16),
+      margin: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            IOSColors.secondarySystemGroupedBackground,
-          ],
-        ),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: IOSColors.systemBlue.withOpacity(0.1),
-            blurRadius: 30,
-            offset: Offset(0, 10),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 20,
             offset: Offset(0, 4),
           ),
         ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            // Animated gradient overlay
-            AnimatedBuilder(
-              animation: _shimmerController,
-              builder: (context, child) {
-                return Container(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with server info
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF007AFF).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Center(
+                        child: Lottie.asset(
+                          widget.selectedServerLogo,
+                          width: 28,
+                          height: 28,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.selectedServer,
+                            style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.41,
+                              color: Colors.black,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            'Connected',
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: -0.08,
+                              color: Color(0xFF34C759),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _buildIPButton(),
+                  ],
+                ),
+                
+                SizedBox(height: 20),
+                
+                // Duration Badge
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment(-1.0 + (_shimmerController.value * 2), -1.0),
-                      end: Alignment(1.0 + (_shimmerController.value * 2), 1.0),
-                      colors: [
-                        Colors.transparent,
-                        IOSColors.systemBlue.withOpacity(0.02),
-                        Colors.transparent,
-                      ],
-                    ),
+                    color: Color(0xFFF2F2F7),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                );
-              },
-            ),
-            
-            // Content
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Header
-                  Row(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              IOSColors.systemBlue.withOpacity(0.2),
-                              IOSColors.systemBlue.withOpacity(0.1),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: IOSColors.systemBlue.withOpacity(0.2),
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Lottie.asset(
-                            widget.selectedServerLogo,
-                            width: 32,
-                            height: 32,
-                          ),
-                        ),
+                      Icon(
+                        CupertinoIcons.clock,
+                        size: 16,
+                        color: Color(0xFF007AFF),
                       ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              widget.selectedServer,
-                              style: IOSTypography.headline.copyWith(
-                                color: IOSColors.label,
-                              ),
-                            ),
-                            SizedBox(height: 2),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 8,
-                                  height: 8,
-                                  decoration: BoxDecoration(
-                                    color: IOSColors.systemGreen,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: IOSColors.systemGreen.withOpacity(0.5),
-                                        blurRadius: 4,
-                                        spreadRadius: 1,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(width: 6),
-                                Text(
-                                  'Connected',
-                                  style: IOSTypography.footnote.copyWith(
-                                    color: IOSColors.systemGreen,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      _buildIPButton(),
-                    ],
-                  ),
-                  
-                  SizedBox(height: 20),
-                  
-                  // Duration
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: IOSColors.tertiarySystemFill,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          CupertinoIcons.clock_fill,
-                          size: 16,
-                          color: IOSColors.systemBlue,
-                        ),
-                        SizedBox(width: 6),
-                        Text(
+                      SizedBox(width: 6),
+                      Directionality(
+                        textDirection: TextDirection.ltr,
+                        child: Text(
                           widget.duration,
-                          style: IOSTypography.subheadline.copyWith(
-                            color: IOSColors.label,
+                          style: TextStyle(
+                            fontSize: 15,
                             fontWeight: FontWeight.w600,
+                            letterSpacing: -0.24,
+                            color: Colors.black,
                             fontFeatures: [FontFeature.tabularFigures()],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  
-                  SizedBox(height: 20),
-                  
-                  // Stats
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStatCard(
-                          icon: CupertinoIcons.speedometer,
-                          title: context.tr('realtime_usage'),
-                          download: formatBytes(widget.downloadSpeed),
-                          upload: formatBytes(widget.uploadSpeed),
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              IOSColors.systemBlue.withOpacity(0.1),
-                              IOSColors.systemBlue.withOpacity(0.05),
-                            ],
-                          ),
-                          borderColor: IOSColors.systemBlue.withOpacity(0.2),
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: _buildStatCard(
-                          icon: CupertinoIcons.chart_bar_fill,
-                          title: context.tr('total_usage'),
-                          download: formatSpeedBytes(widget.download),
-                          upload: formatSpeedBytes(widget.upload),
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              IOSColors.systemGreen.withOpacity(0.1),
-                              IOSColors.systemGreen.withOpacity(0.05),
-                            ],
-                          ),
-                          borderColor: IOSColors.systemGreen.withOpacity(0.2),
-                        ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                
+                SizedBox(height: 20),
+                
+                // Stats
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStatCard(
+                        icon: CupertinoIcons.arrow_down_circle_fill,
+                        title: context.tr('realtime_usage'),
+                        download: formatBytes(widget.downloadSpeed),
+                        upload: formatBytes(widget.uploadSpeed),
+                        color: Color(0xFF007AFF),
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: _buildStatCard(
+                        icon: CupertinoIcons.arrow_up_arrow_down_circle_fill,
+                        title: context.tr('total_usage'),
+                        download: formatSpeedBytes(widget.download),
+                        upload: formatSpeedBytes(widget.upload),
+                        color: Color(0xFF34C759),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -271,10 +178,10 @@ class _IOSVpnCardState extends State<IOSVpnCard> with TickerProviderStateMixin {
 
   Widget _buildIPButton() {
     return CupertinoButton(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       minSize: 0,
-      borderRadius: BorderRadius.circular(10),
-      color: IOSColors.tertiarySystemFill,
+      borderRadius: BorderRadius.circular(8),
+      color: Color(0xFFF2F2F7),
       onPressed: isLoading ? null : () async {
         setState(() => isLoading = true);
         try {
@@ -298,39 +205,25 @@ class _IOSVpnCardState extends State<IOSVpnCard> with TickerProviderStateMixin {
           if (isLoading)
             CupertinoActivityIndicator(radius: 8)
           else ...[
-            Icon(
-              CupertinoIcons.location_fill,
-              size: 14,
-              color: IOSColors.systemBlue,
-            ),
-            if (ipflag != null || ipText != null) ...[
-              SizedBox(width: 6),
-              if (ipflag != null)
-                Text(
-                  ipflag!,
-                  style: TextStyle(fontSize: 14),
-                ),
-              if (ipText != null) ...[
-                if (ipflag != null) SizedBox(width: 4),
-                Text(
-                  ipText!,
-                  style: IOSTypography.footnote.copyWith(
-                    color: IOSColors.label,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ],
-            if (ipflag == null && ipText == null) ...[
-              SizedBox(width: 4),
+            if (ipflag != null) ...[
               Text(
-                'IP',
-                style: IOSTypography.footnote.copyWith(
-                  color: IOSColors.label,
+                ipflag!,
+                style: TextStyle(fontSize: 14),
+              ),
+              SizedBox(width: 6),
+            ],
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: Text(
+                ipText ?? context.tr('show_ip'),
+                style: TextStyle(
+                  fontSize: 13,
                   fontWeight: FontWeight.w500,
+                  letterSpacing: -0.08,
+                  color: Colors.black.withOpacity(0.6),
                 ),
               ),
-            ],
+            ),
           ],
         ],
       ),
@@ -342,16 +235,15 @@ class _IOSVpnCardState extends State<IOSVpnCard> with TickerProviderStateMixin {
     required String title,
     required String download,
     required String upload,
-    required Gradient gradient,
-    required Color borderColor,
+    required Color color,
   }) {
     return Container(
-      padding: EdgeInsets.all(14),
+      padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: gradient,
-        borderRadius: BorderRadius.circular(14),
+        color: color.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: borderColor,
+          color: color.withOpacity(0.2),
           width: 1,
         ),
       ),
@@ -360,25 +252,20 @@ class _IOSVpnCardState extends State<IOSVpnCard> with TickerProviderStateMixin {
         children: [
           Row(
             children: [
-              Container(
-                padding: EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.8),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  icon,
-                  color: IOSColors.systemBlue,
-                  size: 18,
-                ),
+              Icon(
+                icon,
+                color: color,
+                size: 20,
               ),
-              SizedBox(width: 8),
+              SizedBox(width: 6),
               Expanded(
                 child: Text(
                   title,
-                  style: IOSTypography.caption1.copyWith(
-                    color: IOSColors.secondaryLabel,
+                  style: TextStyle(
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
+                    letterSpacing: 0.07,
+                    color: Colors.black.withOpacity(0.6),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -392,42 +279,44 @@ class _IOSVpnCardState extends State<IOSVpnCard> with TickerProviderStateMixin {
               Icon(
                 CupertinoIcons.arrow_down,
                 size: 14,
-                color: IOSColors.tertiaryLabel,
+                color: Colors.black.withOpacity(0.4),
               ),
               SizedBox(width: 4),
-              Expanded(
+              Directionality(
+                textDirection: TextDirection.ltr,
                 child: Text(
                   download,
-                  style: IOSTypography.subheadline.copyWith(
-                    color: IOSColors.label,
+                  style: TextStyle(
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
+                    letterSpacing: -0.24,
+                    color: Colors.black,
                     fontFeatures: [FontFeature.tabularFigures()],
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 6),
+          SizedBox(height: 4),
           Row(
             children: [
               Icon(
                 CupertinoIcons.arrow_up,
                 size: 14,
-                color: IOSColors.tertiaryLabel,
+                color: Colors.black.withOpacity(0.4),
               ),
               SizedBox(width: 4),
-              Expanded(
+              Directionality(
+                textDirection: TextDirection.ltr,
                 child: Text(
                   upload,
-                  style: IOSTypography.subheadline.copyWith(
-                    color: IOSColors.label,
+                  style: TextStyle(
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
+                    letterSpacing: -0.24,
+                    color: Colors.black,
                     fontFeatures: [FontFeature.tabularFigures()],
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -473,31 +362,28 @@ Future<Map<String, String>> getIpApi() async {
       options: Options(
         headers: {'X-Content-Type-Options': 'nosniff'},
       ),
-    ).timeout(Duration(seconds: 5));
+    );
 
     if (response.statusCode == 200) {
       final data = response.data;
       if (data != null && data is Map) {
-        String ip = data['ipAddress'] ?? 'Unknown';
+        String ip = data['ipAddress'] ?? 'Unknown IP';
         if (ip.contains('.')) {
           final parts = ip.split('.');
           if (parts.length == 4) {
-            ip = '${parts[0]}.${parts[1]}.*.${parts[3]}';
+            ip = '${parts[0]}.*.*.${parts[3]}';
           }
         } else if (ip.contains(':')) {
           final parts = ip.split(':');
           if (parts.length > 4) {
-            ip = '${parts[0]}:${parts[1]}::${parts.last}';
+            ip = '${parts[0]}:${parts[1]}:****:${parts.last}';
           }
         }
-        return {
-          'countryCode': data['countryCode'] ?? 'XX',
-          'ip': ip,
-        };
+        return {'countryCode': data['countryCode'] ?? 'Unknown', 'ip': ip};
       }
     }
-    return {'countryCode': 'XX', 'ip': 'Unknown'};
+    return {'countryCode': 'Unknown', 'ip': 'Unknown IP'};
   } catch (e) {
-    return {'countryCode': 'XX', 'ip': 'Error'};
+    return {'countryCode': 'Error', 'ip': 'Error'};
   }
 }
