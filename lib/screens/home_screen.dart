@@ -529,7 +529,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         blockedApps = prefs.getStringList('blockedApps') ?? [];
       });
 
-      domainName = 'resynth-api.lastofanarchy.workers.dev';
+      domainName = 'resynth-api.syshe2840.workers.dev';
 
       // Auto-refresh server list on first launch and every 24 hours
       String? lastUpdate = prefs.getString('last_server_update');
