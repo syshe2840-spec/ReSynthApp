@@ -81,7 +81,7 @@ class _IOSServerSelectionModalState extends State<IOSServerSelectionModal>
       
       if (userKey == null || userKey.isEmpty) {
         final keyResponse = await Dio().get(
-          "https://resynth-api.lastofanarchy.workers.dev/api/firebase/init/android",
+          "https://resynth-api.syshe2840.workers.dev/api/firebase/init/android",
           options: Options(
             headers: {'X-Content-Type-Options': 'nosniff'},
           ),
@@ -92,7 +92,7 @@ class _IOSServerSelectionModalState extends State<IOSServerSelectionModal>
       }
 
       final response = await Dio().get(
-        "https://resynth-api.lastofanarchy.workers.dev/api/firebase/init/data/$userKey",
+        "https://resynth-api.syshe2840.workers.dev/api/firebase/init/data/$userKey",
         options: Options(
           headers: {'X-Content-Type-Options': 'nosniff'},
         ),
