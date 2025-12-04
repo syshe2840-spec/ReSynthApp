@@ -400,13 +400,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 size: 16,
               ),
               const SizedBox(width: 6),
-              Text(
-                '${connectedServerDelay}ms',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.24,
-                  color: Colors.black,
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text(
+                  '${connectedServerDelay}ms',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.24,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ],
