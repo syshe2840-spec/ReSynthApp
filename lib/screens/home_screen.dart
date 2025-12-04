@@ -402,7 +402,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               const SizedBox(width: 6),
               Text(
                 '${connectedServerDelay}ms',
-                textDirection: TextDirection.ltr,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
