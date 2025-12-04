@@ -84,7 +84,6 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: Column(
           children: [
-            // iOS-style Server Selector
             GestureDetector(
               onTap: () => _showServerSelectionModal(context),
               child: Container(
@@ -175,15 +174,15 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   if (value.state == 'CONNECTED') ...[
                                     Expanded(
-                                  child: IOSVpnCard(
-  download: value.download.toString(),
-  upload: value.upload.toString(),
-  downloadSpeed: value.downloadSpeed.toString(),
-  uploadSpeed: value.uploadSpeed.toString(),
-  selectedServer: selectedServer,
-  selectedServerLogo: selectedServerLogo ?? 'assets/lottie/auto.json',
-  duration: value.duration,
-),
+                                      child: IOSVpnCard(
+                                        download: value.download.toString(),
+                                        upload: value.upload.toString(),
+                                        downloadSpeed: value.downloadSpeed.toString(),
+                                        uploadSpeed: value.uploadSpeed.toString(),
+                                        selectedServer: selectedServer,
+                                        selectedServerLogo: selectedServerLogo ?? 'assets/lottie/auto.json',
+                                        duration: value.duration,
+                                      ),
                                     ),
                                   ],
                                 ],
@@ -202,15 +201,15 @@ class _HomePageState extends State<HomePage> {
                                 const SizedBox(height: 16),
                                 _buildDelayIndicator(),
                                 const SizedBox(height: 32),
-                       IOSVpnCard(
-  download: value.download.toString(),
-  upload: value.upload.toString(),
-  downloadSpeed: value.downloadSpeed.toString(),
-  uploadSpeed: value.uploadSpeed.toString(),
-  selectedServer: selectedServer,
-  selectedServerLogo: selectedServerLogo ?? 'assets/lottie/auto.json',
-  duration: value.duration,
-),
+                                IOSVpnCard(
+                                  download: value.download.toString(),
+                                  upload: value.upload.toString(),
+                                  downloadSpeed: value.downloadSpeed.toString(),
+                                  uploadSpeed: value.uploadSpeed.toString(),
+                                  selectedServer: selectedServer,
+                                  selectedServerLogo: selectedServerLogo ?? 'assets/lottie/auto.json',
+                                  duration: value.duration,
+                                ),
                               ],
                             ],
                           );
@@ -392,7 +391,6 @@ class _HomePageState extends State<HomePage> {
 
       domainName = 'begzar-api.lastofanarchy.workers.dev';
       
-      // چک کردن آخرین آپدیت سرورها
       String? lastUpdate = prefs.getString('last_server_update');
       bool shouldUpdate = false;
       
@@ -405,9 +403,6 @@ class _HomePageState extends State<HomePage> {
           
           if (difference.inHours >= 24) {
             shouldUpdate = true;
-            print('🔄 24 ساعت گذشته، آپدیت سرورها...');
-          } else {
-            print('✅ سرورها تازه هستند (${difference.inHours} ساعت قبل)');
           }
         } catch (e) {
           shouldUpdate = true;
@@ -480,11 +475,9 @@ class _HomePageState extends State<HomePage> {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('servers_list', jsonEncode(servers));
         await prefs.setString('last_server_update', DateTime.now().toIso8601String());
-        
-        print('✅ سرورها آپدیت شدند: ${DateTime.now()}');
       }
     } catch (e) {
-      print('❌ خطا در رفرش سرورها: $e');
+      // Silent error handling
     }
   }
 
@@ -645,14 +638,10 @@ class _HomePageState extends State<HomePage> {
 
     if (selectedServer == 'Automatic') {
       filteredServers = serverList;
-      print('🔄 Automatic mode - تست ${serverList.length} سرور');
     } else {
       var found = serverList.where((s) => s['name'] == selectedServer).toList();
       if (found.isNotEmpty) {
         filteredServers.add(found[0]);
-        print('✅ سرور انتخاب شده: ${found[0]['name']}');
-      } else {
-        print('❌ سرور "$selectedServer" پیدا نشد!');
       }
     }
 
@@ -673,20 +662,13 @@ class _HomePageState extends State<HomePage> {
 
     List<String> configList = [];
 
-    print('📡 شروع Parse کانفیگ‌ها...');
-
     for (var server in filteredServers) {
       try {
-        print('🔧 Parse: ${server['name']}');
-        print('   URL: ${server['config']!.substring(0, 50)}...');
-
         final V2RayURL v2rayURL = FlutterV2ray.parseFromURL(server['config']!);
         String fullConfig = v2rayURL.getFullConfiguration();
-
         configList.add(fullConfig);
-        print('✅ Parse موفق: ${server['name']}');
       } catch (e) {
-        print('❌ خطا در Parse ${server['name']}: $e');
+        // Silent error handling
       }
     }
 
@@ -705,14 +687,10 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    print('📊 تعداد کانفیگ‌های آماده: ${configList.length}');
-
     if (configList.length == 1) {
-      print('🚀 اتصال مستقیم به سرور...');
       String bestConfig = configList[0];
 
       if (await flutterV2ray.requestPermission()) {
-        print('✅ دسترسی VPN داده شد');
         try {
           flutterV2ray.startV2Ray(
             remark: context.tr('app_title'),
@@ -722,9 +700,7 @@ class _HomePageState extends State<HomePage> {
             notificationDisconnectButtonName: context.tr('disconnect_btn'),
             blockedApps: blockedApps,
           );
-          print('✅ V2Ray شروع شد');
         } catch (e) {
-          print('❌ خطا در شروع V2Ray: $e');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -735,7 +711,6 @@ class _HomePageState extends State<HomePage> {
           }
         }
       } else {
-        print('❌ دسترسی VPN رد شد');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -746,17 +721,9 @@ class _HomePageState extends State<HomePage> {
         }
       }
     } else {
-      print('🎯 Automatic mode - شروع تست ping...');
-
       try {
         Map<String, dynamic> getAllDelay =
             jsonDecode(await flutterV2ray.getAllServerDelay(configs: configList));
-
-        print('📊 نتایج Ping:');
-        getAllDelay.forEach((key, value) {
-          print(
-              '   Config ${getAllDelay.keys.toList().indexOf(key) + 1}: ${value}ms');
-        });
 
         int minPing = 99999999;
         String bestConfig = '';
@@ -769,8 +736,6 @@ class _HomePageState extends State<HomePage> {
         });
 
         if (bestConfig.isNotEmpty) {
-          print('🎯 بهترین سرور: Ping = ${minPing}ms');
-
           if (await flutterV2ray.requestPermission()) {
             flutterV2ray.startV2Ray(
               remark: context.tr('app_title'),
@@ -780,9 +745,7 @@ class _HomePageState extends State<HomePage> {
               notificationDisconnectButtonName: context.tr('disconnect_btn'),
               blockedApps: blockedApps,
             );
-            print('✅ اتصال به بهترین سرور');
           } else {
-            print('❌ دسترسی VPN رد شد');
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -793,7 +756,6 @@ class _HomePageState extends State<HomePage> {
             }
           }
         } else {
-          print('❌ هیچ سرور فعالی یافت نشد');
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -804,7 +766,6 @@ class _HomePageState extends State<HomePage> {
           }
         }
       } catch (e) {
-        print('❌ خطا در تست ping: $e');
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
