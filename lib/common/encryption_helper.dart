@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:encrypt/encrypt.dart' as encrypt;
 
 class EncryptionHelper {
-  // AES Key - Keep this secret!
-  static const String _aesKey = 'ReSynthVPN2024Key'; // 16 chars for AES-128
-  static const String _aesIV = 'ReSynthIV16Chars!'; // 16 chars IV
+  // AES Key - Keep this secret! (MUST match Python encrypt_servers.py)
+  static const String _aesKey = 'BegzarVPN2024Key'; // 16 chars for AES-128
+  static const String _aesIV = 'BegzarIV16Chars!'; // 16 chars IV
 
   static final encrypt.Key _key = encrypt.Key.fromUtf8(_aesKey.padRight(32, '0'));
   static final encrypt.IV _iv = encrypt.IV.fromUtf8(_aesIV);
