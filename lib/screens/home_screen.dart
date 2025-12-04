@@ -48,28 +48,89 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool isFetchingPing = false;
   List<String> blockedApps = [];
 
-  // Animation controllers for logo
-  late AnimationController _logoAnimationController;
+  // Advanced logo animation controllers
+  late AnimationController _logoMainController;
+  late AnimationController _logoPulseController;
   late Animation<double> _logoRotation;
   late Animation<double> _logoScale;
+  late Animation<double> _logoPulse;
+  late Animation<double> _logoOpacity;
+  late Animation<Color?> _logoColor;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize logo animation
-    _logoAnimationController = AnimationController(
-      duration: Duration(milliseconds: 800),
+    // Main animation controller
+    _logoMainController = AnimationController(
+      duration: Duration(milliseconds: 1200),
       vsync: this,
     );
 
-    _logoRotation = Tween<double>(begin: 0, end: 2 * 3.14159).animate(
-      CurvedAnimation(parent: _logoAnimationController, curve: Curves.easeInOut),
+    // Pulse animation controller
+    _logoPulseController = AnimationController(
+      duration: Duration(milliseconds: 600),
+      vsync: this,
     );
 
-    _logoScale = Tween<double>(begin: 1.0, end: 1.2).animate(
-      CurvedAnimation(parent: _logoAnimationController, curve: Curves.easeInOut),
+    // Rotation animation (360 degrees with bounce)
+    _logoRotation = Tween<double>(
+      begin: 0,
+      end: 2 * 3.14159,
+    ).animate(
+      CurvedAnimation(
+        parent: _logoMainController,
+        curve: Curves.elasticOut,
+      ),
     );
+
+    // Scale animation (bounce effect)
+    _logoScale = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 1.3).chain(
+          CurveTween(curve: Curves.easeOut),
+        ),
+        weight: 30,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.3, end: 0.9).chain(
+          CurveTween(curve: Curves.easeIn),
+        ),
+        weight: 30,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.9, end: 1.0).chain(
+          CurveTween(curve: Curves.bounceOut),
+        ),
+        weight: 40,
+      ),
+    ]).animate(_logoMainController);
+
+    // Pulse animation
+    _logoPulse = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(
+        parent: _logoPulseController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
+    // Opacity animation (fade in/out)
+    _logoOpacity = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 1.0, end: 0.5),
+        weight: 50,
+      ),
+      TweenSequenceItem(
+        tween: Tween<double>(begin: 0.5, end: 1.0),
+        weight: 50,
+      ),
+    ]).animate(_logoMainController);
+
+    // Color animation (blue to purple and back)
+    _logoColor = ColorTween(
+      begin: IOSColors.systemBlue,
+      end: Color(0xFF5856D6), // iOS purple
+    ).animate(_logoMainController);
 
     getVersionName();
     _loadServerSelection();
@@ -95,13 +156,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   void dispose() {
-    _logoAnimationController.dispose();
+    _logoMainController.dispose();
+    _logoPulseController.dispose();
     super.dispose();
   }
 
   void _animateLogo() {
-    _logoAnimationController.forward().then((_) {
-      _logoAnimationController.reverse();
+    // Main animation
+    _logoMainController.forward(from: 0).then((_) {
+      // Start pulse animation
+      _logoPulseController.repeat(reverse: true);
+      Future.delayed(Duration(milliseconds: 800), () {
+        _logoPulseController.stop();
+        _logoPulseController.reset();
+      });
     });
   }
 
@@ -272,16 +340,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           child: GestureDetector(
             onTap: _animateLogo,
             child: AnimatedBuilder(
-              animation: _logoAnimationController,
+              animation: Listenable.merge([_logoMainController, _logoPulseController]),
               builder: (context, child) {
-                return Transform.rotate(
-                  angle: _logoRotation.value,
-                  child: Transform.scale(
-                    scale: _logoScale.value,
-                    child: Image.asset(
-                      'assets/images/logo_transparent.png',
-                      color: IOSColors.systemBlue,
-                      height: 32,
+                return Transform.scale(
+                  scale: _logoScale.value * _logoPulse.value,
+                  child: Transform.rotate(
+                    angle: _logoRotation.value,
+                    child: Opacity(
+                      opacity: _logoOpacity.value,
+                      child: Image.asset(
+                        'assets/images/logo_transparent.png',
+                        color: _logoColor.value,
+                        height: 32,
+                      ),
                     ),
                   ),
                 );
@@ -444,12 +515,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
       domainName = 'begzar-api.lastofanarchy.workers.dev';
 
-      // ✅ Auto-refresh server list on first launch and every 24 hours
+      // Auto-refresh server list on first launch and every 24 hours
       String? lastUpdate = prefs.getString('last_server_update');
       bool shouldUpdate = false;
 
       if (lastUpdate == null) {
-        // First time - always fetch servers
         shouldUpdate = true;
       } else {
         try {
@@ -457,7 +527,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           Duration difference = DateTime.now().difference(lastUpdateTime);
 
           if (difference.inHours >= 24) {
-            // More than 24 hours - refresh
             shouldUpdate = true;
           }
         } catch (e) {
