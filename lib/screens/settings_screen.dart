@@ -42,17 +42,10 @@ class _SettingsWidgetState extends State<SettingsWidget> {
             letterSpacing: -0.41,
           ),
         ),
-        leading: CupertinoButton(
-          padding: EdgeInsets.zero,
-          onPressed: () => Navigator.pop(context),
-          child: Icon(
-            CupertinoIcons.back,
-            color: IOSColors.systemBlue,
-          ),
-        ),
         backgroundColor: IOSColors.systemBackground,
         elevation: 0,
         centerTitle: true,
+        automaticallyImplyLeading: false, // ✅ حذف دکمه Back
       ),
       backgroundColor: IOSColors.systemGroupedBackground,
       body: ListView(
@@ -84,7 +77,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               subtitle: context.tr('block_detail'),
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => BlockedAppsWidgets(),
                   ),
                 );
@@ -119,7 +112,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
               onTap: () {
                 Navigator.of(context)
                     .push(
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) => LanguageWidget(
                       selectedLanguage: _selectedLanguage!,
                     ),
