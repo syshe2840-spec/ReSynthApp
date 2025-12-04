@@ -2,7 +2,7 @@ name: resynth
 description: "ReSynth VPN"
 publish_to: 'none'
 
-version: 5.5.0+7
+version: 1.0.0+1
 
 environment:
   sdk: ^3.5.2
