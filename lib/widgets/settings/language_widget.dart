@@ -1,7 +1,8 @@
-import 'package:begzar/common/theme.dart';
+import 'package:begzar/common/ios_theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:easy_localization/easy_localization.dart'; // اضافه کردن پکیج easy_localization
+import 'package:easy_localization/easy_localization.dart';
 
 class LanguageWidget extends StatefulWidget {
   final String selectedLanguage;
@@ -18,86 +19,146 @@ class _LanguageWidgetState extends State<LanguageWidget> {
   @override
   void initState() {
     super.initState();
-    _selectedLanguage =
-        widget.selectedLanguage; // مقدار اولیه را از ورودی دریافت کنید
+    _selectedLanguage = widget.selectedLanguage;
   }
 
-  // ذخیره زبان انتخاب شده در SharedPreferences
   void _saveSelectedLanguage(String language) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('selectedLanguage', language);
   }
 
-  // تغییر زبان با استفاده از easy_localization
   void _changeLocale(BuildContext context, String language) {
     if (language == 'English') {
-      setState(() {});
       context.setLocale(Locale('en', 'US'));
-      setState(() {});
     } else if (language == 'فارسی') {
-      setState(() {});
       context.setLocale(Locale('fa', 'IR'));
-      setState(() {});
     } else if (language == '中文') {
-      setState(() {});
       context.setLocale(Locale('zh', 'CN'));
-      setState(() {});
     } else if (language == 'русский') {
-      setState(() {});
       context.setLocale(Locale('ru', 'RU'));
-      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: IOSColors.systemGroupedBackground,
       appBar: AppBar(
-        title: Text(context.tr('select_language')),
-        backgroundColor: ThemeColor.backgroundColor,
+        backgroundColor: IOSColors.systemBackground,
+        elevation: 0,
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          onPressed: () => Navigator.pop(context),
+          child: Icon(
+            CupertinoIcons.back,
+            color: IOSColors.systemBlue,
+          ),
+        ),
+        title: Text(
+          context.tr('select_language'),
+          style: IOSTypography.headline.copyWith(
+            color: IOSColors.label,
+          ),
+        ),
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: ListView(
+        physics: BouncingScrollPhysics(),
+        padding: EdgeInsets.symmetric(vertical: 20),
+        children: [
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: IOSColors.secondarySystemGroupedBackground,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: [
+                _buildLanguageTile(context, 'English', isFirst: true),
+                _buildDivider(),
+                _buildLanguageTile(context, 'فارسی'),
+                _buildDivider(),
+                _buildLanguageTile(context, '中文'),
+                _buildDivider(),
+                _buildLanguageTile(context, 'русский', isLast: true),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Padding(
+      padding: EdgeInsets.only(left: 56),
+      child: Divider(
+        height: 1,
+        thickness: 0.5,
+        color: IOSColors.separator,
+      ),
+    );
+  }
+
+  Widget _buildLanguageTile(
+    BuildContext context,
+    String language, {
+    bool isFirst = false,
+    bool isLast = false,
+  }) {
+    bool isSelected = _selectedLanguage == language;
+    
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      onPressed: () {
+        setState(() {
+          _selectedLanguage = language;
+          _saveSelectedLanguage(language);
+          _changeLocale(context, language);
+        });
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
           children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isSelected 
+                      ? IOSColors.systemBlue 
+                      : IOSColors.tertiaryLabel,
+                  width: 2,
+                ),
+              ),
+              child: isSelected
+                  ? Center(
+                      child: Container(
+                        width: 14,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: IOSColors.systemBlue,
+                        ),
+                      ),
+                    )
+                  : null,
+            ),
+            SizedBox(width: 12),
             Expanded(
-              child: ListView(
-                children: [
-                  _buildLanguageTile(context, 'English'),
-                  _buildLanguageTile(context, 'فارسی'),
-                  _buildLanguageTile(context, '中文'),
-                  _buildLanguageTile(context, 'русский'),
-                ],
+              child: Text(
+                language,
+                style: IOSTypography.body.copyWith(
+                  color: IOSColors.label,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                ),
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildLanguageTile(BuildContext context, String language) {
-    return ListTile(
-      title: Text(language, textAlign: TextAlign.left),
-      leading: Radio<String>(
-        value: language,
-        groupValue: _selectedLanguage,
-        onChanged: (String? value) {
-          setState(() {
-            _selectedLanguage = value!;
-            _saveSelectedLanguage(value); // ذخیره زبان انتخاب شده
-            _changeLocale(context, value); // تغییر زبان برنامه
-          });
-        },
-      ),
-      onTap: () {
-        setState(() {
-          _selectedLanguage = language;
-          _saveSelectedLanguage(language); // ذخیره زبان انتخاب شده
-          _changeLocale(context, language); // تغییر زبان برنامه
-        });
-      },
     );
   }
 }
