@@ -48,6 +48,19 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
     _logoAnimationController.forward(from: 0);
   }
 
+  String _toEnglishDigits(String input) {
+    const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+    const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+
+    String result = input;
+    for (int i = 0; i < 10; i++) {
+      result = result.replaceAll(persian[i], english[i]);
+      result = result.replaceAll(arabic[i], english[i]);
+    }
+    return result;
+  }
+
   Future<void> _getVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();
     if (mounted) {
@@ -132,7 +145,7 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
 
                 if (version != null)
                   Text(
-                    'Version : $version',
+                    _toEnglishDigits('Version : $version'),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -223,7 +236,7 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
                 const SizedBox(height: 24),
 
                 Text(
-                  context.tr('copyright'),
+                  _toEnglishDigits(context.tr('copyright')),
                   style: TextStyle(
                     fontSize: 12,
                     color: IOSColors.tertiaryLabel,
