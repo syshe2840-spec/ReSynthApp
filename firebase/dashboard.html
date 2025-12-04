@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReSynth VPN - Admin Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #fff;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+      background: linear-gradient(45deg, #00d4ff, #7b2ff7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .stat-card h3 {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-card .number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .stat-card .label {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .chart-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 20px;
+    }
+
+    .server-list {
+      list-style: none;
+    }
+
+    .server-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .server-name {
+      font-weight: bold;
+    }
+
+    .server-count {
+      background: rgba(0, 212, 255, 0.2);
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+    }
+
+    .setup-notice {
+      background: rgba(255, 193, 7, 0.2);
+      border: 2px solid rgba(255, 193, 7, 0.5);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .setup-notice h2 {
+      color: #ffc107;
+      margin-bottom: 10px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 50px;
+      font-size: 1.2rem;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .error {
+      background: rgba(255, 0, 0, 0.2);
+      border: 2px solid rgba(255, 0, 0, 0.5);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 ReSynth VPN Dashboard</h1>
+
+    <div class="setup-notice" id="setupNotice">
+      <h2>⚙️ Setup Required</h2>
+      <p>Please follow the instructions in <code>firebase/TRACKING_SETUP.md</code> to enable user tracking.</p>
+    </div>
+
+    <div id="loading" class="loading" style="display: none;">
+      Loading data from Firebase...
+    </div>
+
+    <div id="error" class="error" style="display: none;"></div>
+
+    <div id="dashboard" style="display: none;">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Total Users</h3>
+          <div class="number" id="totalUsers">0</div>
+          <div class="label">All time</div>
+        </div>
+
+        <div class="stat-card">
+          <h3>Active Today</h3>
+          <div class="number" id="activeToday">0</div>
+          <div class="label">Last 24 hours</div>
+        </div>
+
+        <div class="stat-card">
+          <h3>Connections Today</h3>
+          <div class="number" id="connectionsToday">0</div>
+          <div class="label">Total connections</div>
+        </div>
+
+        <div class="stat-card">
+          <h3>Currently Connected</h3>
+          <div class="number" id="currentlyConnected">0</div>
+          <div class="label">Active VPN sessions</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <h3>Popular Servers</h3>
+        <ul class="server-list" id="serverList">
+          <!-- Populated by JavaScript -->
+        </ul>
+      </div>
+
+      <div class="chart-container">
+        <h3>Recent Users</h3>
+        <ul class="server-list" id="userList">
+          <!-- Populated by JavaScript -->
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+    // Firebase configuration from google-services.json
+    const firebaseConfig = {
+      apiKey: "AIzaSyCh9lSSlqM-Olm0ghsFyomxIjYaWmdnp-8",
+      databaseURL: "https://resynth-b44bb-default-rtdb.firebaseio.com",
+      projectId: "resynth-b44bb",
+      storageBucket: "resynth-b44bb.firebasestorage.app",
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('setupNotice').style.display = 'none';
+
+    // Listen to users data
+    const usersRef = ref(database, 'users');
+    onValue(usersRef, (snapshot) => {
+      try {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+
+        const users = snapshot.val();
+
+        if (!users) {
+          document.getElementById('setupNotice').style.display = 'block';
+          document.getElementById('dashboard').style.display = 'none';
+          return;
+        }
+
+        // Calculate stats
+        const totalUsers = Object.keys(users).length;
+        const now = new Date();
+        const oneDayAgo = new Date(now - 24 * 60 * 60 * 1000);
+
+        let activeToday = 0;
+        let currentlyConnected = 0;
+        const recentUsers = [];
+
+        Object.entries(users).forEach(([userId, userData]) => {
+          const lastSeen = new Date(userData.last_seen);
+
+          if (lastSeen > oneDayAgo) {
+            activeToday++;
+          }
+
+          if (userData.is_connected) {
+            currentlyConnected++;
+          }
+
+          recentUsers.push({
+            id: userId,
+            lastSeen: lastSeen,
+            platform: userData.platform,
+            server: userData.current_server
+          });
+        });
+
+        // Update UI
+        document.getElementById('totalUsers').textContent = totalUsers;
+        document.getElementById('activeToday').textContent = activeToday;
+        document.getElementById('currentlyConnected').textContent = currentlyConnected;
+
+        // Show recent users
+        recentUsers.sort((a, b) => b.lastSeen - a.lastSeen);
+        const userListHTML = recentUsers.slice(0, 10).map(user => `
+          <li class="server-item">
+            <div>
+              <span class="server-name">${user.id.substring(0, 20)}...</span>
+              <div style="font-size: 0.85rem; color: rgba(255,255,255,0.6);">
+                ${user.platform} • ${user.server || 'Not connected'}
+              </div>
+            </div>
+            <span class="server-count">${formatTime(user.lastSeen)}</span>
+          </li>
+        `).join('');
+        document.getElementById('userList').innerHTML = userListHTML || '<li class="server-item">No users yet</li>';
+
+      } catch (error) {
+        console.error('Error loading data:', error);
+        document.getElementById('error').textContent = 'Error loading data: ' + error.message;
+        document.getElementById('error').style.display = 'block';
+      }
+    }, (error) => {
+      console.error('Firebase error:', error);
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('error').textContent = 'Firebase connection error. Make sure Realtime Database is enabled.';
+      document.getElementById('error').style.display = 'block';
+    });
+
+    // Listen to today's stats
+    const today = new Date().toISOString().split('T')[0];
+    const statsRef = ref(database, `stats/daily/${today}`);
+    onValue(statsRef, (snapshot) => {
+      const stats = snapshot.val();
+      if (stats && stats.connections) {
+        document.getElementById('connectionsToday').textContent = stats.connections;
+      }
+    });
+
+    // Listen to server stats
+    const serversRef = ref(database, 'stats/servers');
+    onValue(serversRef, (snapshot) => {
+      const servers = snapshot.val();
+      if (servers) {
+        const serverListHTML = Object.entries(servers).map(([name, data]) => `
+          <li class="server-item">
+            <span class="server-name">${name}</span>
+            <span class="server-count">${data.connections} connections</span>
+          </li>
+        `).join('');
+        document.getElementById('serverList').innerHTML = serverListHTML;
+      }
+    });
+
+    function formatTime(date) {
+      const diff = Date.now() - date.getTime();
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(minutes / 60);
+      const days = Math.floor(hours / 24);
+
+      if (days > 0) return `${days}d ago`;
+      if (hours > 0) return `${hours}h ago`;
+      if (minutes > 0) return `${minutes}m ago`;
+      return 'Just now';
+    }
+  </script>
+</body>
+</html>
