@@ -316,7 +316,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               if (value.state == 'CONNECTED') ...[
                                 const SizedBox(height: 16),
                                 _buildDelayIndicator(),
-                                const SizedBox(height: 32),
+                                const SizedBox(height: 20),
                                 IOSVpnCard(
                                   download: value.download,
                                   upload: value.upload,
