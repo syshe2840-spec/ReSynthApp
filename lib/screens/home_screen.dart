@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ui';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:begzar/common/cha.dart';
@@ -401,16 +400,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 size: 16,
               ),
               const SizedBox(width: 6),
-              Directionality(
+              Text(
+                '${connectedServerDelay}ms',
                 textDirection: TextDirection.ltr,
-                child: Text(
-                  '${connectedServerDelay}ms',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: -0.24,
-                    color: Colors.black,
-                  ),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -0.24,
+                  color: Colors.black,
                 ),
               ),
             ],
