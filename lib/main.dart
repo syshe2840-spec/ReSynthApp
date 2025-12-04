@@ -10,9 +10,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_v2ray/model/v2ray_status.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:safe_device/safe_device.dart';
+import 'package:intl/intl.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Force English locale for numbers
+  Intl.defaultLocale = 'en_US';
+
   bool isJailBroken = await SafeDevice.isJailBroken;
   if (isJailBroken != true) {
     await EasyLocalization.ensureInitialized();
