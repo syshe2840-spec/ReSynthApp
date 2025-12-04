@@ -25,19 +25,19 @@ const SERVERS_CONFIG = {
     download_url: btoa("https://github.com/syshe2840-spec/ReSynthApp/releases"),
   },
 
-  // Encrypted server configs (use encrypt_servers.py)
+  // Encrypted server configs (use encrypt_servers.py with ReSynth keys)
   servers: [
     {
       name: "Germany Fast",
-      config: "g5s7+VyhWrBYljZw4zXL/HIk1QbHdukABC8uy4uvOEc2SJ1uWZGudKy43HkmgC1Pc7jrChXdTWLp9KPAXzqFQElfj9qqdAuu60hd7HDQjUW56cDPl2k3+/YQfw+8yqaubnstTHnuIKIvotFcXXIpWBdIqpMIK3i3hvdeMlV9heY8SSrbKipAs53j5TiklNNOuExZWEHIgnF1H6KKJ7VHjqiOxfB0MMOiq42x2SadgvoUoE5HU06WhXsyF8FDe9z73vT7pXNiiz5V3y9R6g7z8+GRPwc6V33jXPt3n1dWlRTh+4cBLaaFM+ZD6s8S3wLe2OuL5De2MklS1XnaitAV3kTQUL1Tr7nVDvMjSNq23N4="
+      config: "yCFMcYZB1DC9q8aa6m/5bO4ZeSfkgfRAqdqTLYxwartlaVFahy81ZpRF+kYt8XAcPYD6wvgtd5VaTDmAKkFqtM9cWfBENFtLBKJoh3yGtm30U66zNqmx6G+6wvhgpG5uN1C65EDPC6vYW8lLCPhutPFaXnNnxdlW9ERxlrWy3MuDtZoo30AI7WoSDNnWLxuC8ZqaWEnW+NxL30rj0JpEezl4ydSpPMd4N6lj7Ws6cAkkD/0c9MOQNkXNAW8EDpTrJ2MIy/ifwga1z+GndqlvzJEx1qayUg4ZQwS96WtXBDttJHGXsIjvD07DsAo89DxLBxnrB1KrmQA9+JocgLCzpbe3yZhQYXPXum4Pq/E4GvI="
     },
     {
       name: "Netherlands Speed",
-      config: "HepGEOcwgoa+pPXwJP4idQyk5upWHUAF96NT8YVkhn0BSSiX0N7Qcmnu7Dvgs+PXQCYjLXmMWfvHXDykNtqy4DrqpyZKBUK2tuC7DdVgx08IPweslPBpnbm4o+SvGWmu9rutNppvfMUKvCjOkplmtKFMgf1t4+nxwW+6wAPUzf0tjWlf/FxbSe2AmS13ZtYbh+OkOZAy/GMGUNKrnoalsRSHbpC730PJOOd64xdrWMShxqtBB1DmNLHj7qxfgik5oHfPwj4VxCn8KiQS6zLY5Naxnwqq9ORApt7R3hwM3DIG8MVq5cfFaC0mh847szc1"
+      config: "8Y8FLf/YP58Qrcftc+YmcIn5YwuZwDhTZkpVV3nVX9oyUqgzWV+b9F2WuSlinrDQjd6ibnV/P8uwBnjE2FtdRCvK/jT0EU+ylZSC0xAC5um9/yJOBcmtCcHq907e7midFNv5mjyr6viFnOt285p0p2xODDzPIekgh/Fojrh/f44tNqVddI222KljyAh0j+ky7mnc9UCKB+SoxAPGQlkuVKD6UEgKebl6z2DOPkYg/7dVjLzkYyu4H721/v068Gm80FifmptQpQxvSLuHqn/Uem/qxMFkDcKwRxhCZSpiNgEzLhgDxgqWpOQ2bpK4Ijac"
     },
     {
       name: "France Secure",
-      config: "sLV4H0QcmrC3nZZ/6aozlVpdo5pUmK7YrRlGWSjY3gWjn9lC1cP+WolwxkuH8x8Iar47P0DXC4xJbbvUbcV3xmdefwbO2LgHu+0fyJkSkaCmPGK0sdOeoAVK8O+vIA0dXuosZ35qe6fVmtYwYIxZYLGlXMIRb93Z2EMsSn/wL/sqb/pjHfEKfTcCCf0ubMqThJyGX4CTQxn0ZXwW1DB83PGuf/oN5ykdcRsOoQ4FTN+wFdwJEl3uur7V3PNzHop6dFGrZl52IgnxHkV6ep7tSDqbnNwqqpe+DkhkG8XXjDx/vwT287iHmn+v52jAEoEr"
+      config: "J8vW7ESpmOwjNfSoocAKDdDTQrQes7CUJ3Oruv+14AkPI5fJMYeAArVfjhMjFZUJ9NGJQ5AylXiUGaB3YJGtT3+/KPsL+wndskU7Av1RrcoYrCcCfZqT8QjA2ZFWQiR6HkNWTwa/lGGV84GdhnzpWrwN9mhraA6Edumh3+3gI1OU8ipV1G9NRyulwuyFr2eSefPKGQjjW6a9QD7GwsCNHYD9ZDl3923kOtVLts1AErvkdtcoNdiM/xsQghP9UeR2qbceLdNW6V5gDIIWvLsM/1VHSFZPpkCRhe3WnFe8E70Zp3Zdov/fyKOVfx0df3yh"
     }
   ]
 };

@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "updated_url": "https://github.com/syshe2840-spec/ReSynthApp/releases",
+  "notification": {
+    "enabled": true,
+    "type": "success",
+    "title": "Welcome to ReSynth VPN!",
+    "message": "Enjoy fast and secure VPN service. Stay connected!",
+    "show_once": true
+  },
+  "servers": [
+    {
+      "name": "Germany Fast",
+      "config": "vless://2f075d0d-4a20-4a78-a5d0-3c01de4d313c@multi.ger.cloudnsas.ir:443?encryption=none&flow=xtls-rprx-vision&security=reality&pbk=61YEDKlaF6jpnBtgKdGghQDPhKMoV4lJVyJaI3Qhj2g&sid=acda9f2a&sni=www.speedtest.net&fp=firefox&spx=%2F&type=tcp&headerType=none#Germany-Fast"
+    },
+    {
+      "name": "Netherlands Speed",
+      "config": "vless://399e8f0f-76c2-4517-b180-9b5f54e22ee0@ns1.go2cloudio.ir:2083?encryption=none&security=tls&sni=37ea2a40546445ff72f1f4c5715a660f.go2cloudio.ir&alpn=h2,http/1.1&fp=chrome&type=ws&host=ns1.go2cloudio.ir&path=%2Fnews#US-CDN"
+    },
+    {
+      "name": "France Secure",
+      "config": "vless://08b6328c-4fdc-4262-b908-f0ad389e9911@ns.cloudnsmkh.ir:443?encryption=none&security=tls&sni=a3947276170e793e157956e4df953f01.ezcloudnet.ir&alpn=h2,http/1.1&fp=chrome&type=ws&host=ns1.ezcloudnet.ir&path=%2Fnews#Netherlands"
+    }
+  ]
+}
