@@ -2,7 +2,7 @@
 
 ![Banner](https://github.com/user-attachments/assets/eaf4d8df-cf72-4fe3-a492-7049df644c18)
 
-# 🐦 Begzar VPN
+# 🐦 ReSynth VPN
 
 **Free, Open-Source VPN Client for Android**
 
@@ -44,7 +44,7 @@
 
 ### 📥 Download
 
-Get the latest version from [Releases](https://github.com/Begzar/BegzarApp/releases/latest)
+Get the latest version from [Releases](https://github.com/ReSynth/ReSynthApp/releases/latest)
 
 
 ### 🤝 Contributing
@@ -69,9 +69,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### 📞 Contact
 
-- **Email**: [info@begzar.xyz](mailto:info@begzar.xyz)
-- **Telegram**: [@BegzarVPN](https://t.me/BegzarVPN)
-- **Website**: [begzar.xyz](https://begzar.xyz)
+- **Email**: [info@resynth.xyz](mailto:info@resynth.xyz)
+- **Telegram**: [@ReSynthVPN](https://t.me/ReSynthVPN)
+- **Website**: [resynth.xyz](https://resynth.xyz)
 
 ---
 
@@ -105,7 +105,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### 📥 دانلود
 
-آخرین نسخه را از [Releases](https://github.com/Begzar/BegzarApp/releases/latest) دانلود کنید
+آخرین نسخه را از [Releases](https://github.com/ReSynth/ReSynthApp/releases/latest) دانلود کنید
 
 ### 🤝 مشارکت
 
@@ -129,9 +129,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### 📞 ارتباط با ما
 
-- **ایمیل**: [info@begzar.xyz](mailto:info@begzar.xyz)
-- **تلگرام**: [@BegzarVPN](https://t.me/BegzarVPN)
-- **وبسایت**: [begzar.xyz](https://begzar.xyz)
+- **ایمیل**: [info@resynth.xyz](mailto:info@resynth.xyz)
+- **تلگرام**: [@ReSynthVPN](https://t.me/ReSynthVPN)
+- **وبسایت**: [resynth.xyz](https://resynth.xyz)
 
 ---
 
@@ -139,6 +139,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **⭐ اگر این پروژه را دوست دارید، یک ستاره بدهید! ⭐**
 
-Made with ❤️ by Begzar Team
+Made with ❤️ by ReSynth Team
 
 </div>

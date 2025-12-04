@@ -1,5 +1,5 @@
 {
-    "app_title": "Begzar",
+    "app_title": "ReSynth",
     "disconnected": "DISCONNECTED",
     "select_server": "Select Server",
     "selected_server": "Automatic",
@@ -18,8 +18,8 @@
     "version_title": "Version",
     "about": "About us",
     "email": "Email: info@begzar.xyz",
-    "copyright": "© 2024 Begzar. All rights reserved.",
-    "about_description": "Begzar is an open-source software designed to provide unrestricted access to the internet. This project is developed with the aim of providing a secure and reliable solution for users, and any commercial or non-commercial use of the Begzar source code is not permitted.",
+    "copyright": "© 2024 ReSynth. All rights reserved.",
+    "about_description": "ReSynth is an open-source software designed to provide unrestricted access to the internet. This project is developed with the aim of providing a secure and reliable solution for users, and any commercial or non-commercial use of the ReSynth source code is not permitted.",
     "error_timeout": "The connection to the server timed out, please try again.",
     "error_domain": "Error retrieving data, please try again.",
     "error_get_version": "Error checking the application version, please try again.",

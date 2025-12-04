@@ -1,8 +1,8 @@
-import 'package:begzar/common/ios_theme.dart';
-import 'package:begzar/screens/about_screen.dart';
-import 'package:begzar/screens/home_screen.dart';
-import 'package:begzar/screens/settings_screen.dart';
-import 'package:begzar/widgets/navigation_rail_widget.dart';
+import 'package:resynth/common/ios_theme.dart';
+import 'package:resynth/screens/about_screen.dart';
+import 'package:resynth/screens/home_screen.dart';
+import 'package:resynth/screens/settings_screen.dart';
+import 'package:resynth/widgets/navigation_rail_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
     );
     
     return MaterialApp(
-      title: 'Begzar VPN',
+      title: 'ReSynth VPN',
       debugShowCheckedModeBanner: false,
       
       // iOS Theme

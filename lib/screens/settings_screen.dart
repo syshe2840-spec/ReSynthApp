@@ -1,6 +1,6 @@
-import 'package:begzar/common/ios_theme.dart';
-import 'package:begzar/widgets/settings/blocked_apps_widget.dart';
-import 'package:begzar/widgets/settings/language_widget.dart';
+import 'package:resynth/common/ios_theme.dart';
+import 'package:resynth/widgets/settings/blocked_apps_widget.dart';
+import 'package:resynth/widgets/settings/language_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';

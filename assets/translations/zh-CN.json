@@ -1,5 +1,5 @@
 {
-    "app_title": "Begzar",
+    "app_title": "ReSynth",
     "disconnected": "已断开连接",
     "select_server": "选择服务器",
     "selected_server": "自动",
@@ -18,8 +18,8 @@
     "version_title": "版本",
     "about": "关于我们",
     "email": "邮箱: info@begzar.xyz",
-    "copyright": "© 2024 Begzar. 版权所有。",
-    "about_description": "Begzar 是一款开源软件，旨在提供不受限制的互联网访问。此项目旨在为用户提供安全可靠的解决方案，Begzar 源代码的任何商业或非商业用途均被禁止。",
+    "copyright": "© 2024 ReSynth. 版权所有。",
+    "about_description": "ReSynth 是一款开源软件，旨在提供不受限制的互联网访问。此项目旨在为用户提供安全可靠的解决方案，ReSynth 源代码的任何商业或非商业用途均被禁止。",
     "error_timeout": "连接服务器超时，请重试。",
     "error_domain": "获取数据错误，请重试。",
     "error_get_version": "检查应用版本时出错，请重试。",

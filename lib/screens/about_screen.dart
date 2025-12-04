@@ -1,4 +1,4 @@
-import 'package:begzar/common/ios_theme.dart';
+import 'package:resynth/common/ios_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -174,11 +174,11 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
 
                 _buildContactCard(
                   icon: CupertinoIcons.mail,
-                  title: 'info@begzar.xyz',
+                  title: 'info@resynth.xyz',
                   onTap: () async {
                     final Uri emailLaunchUri = Uri(
                       scheme: 'mailto',
-                      path: 'info@begzar.xyz',
+                      path: 'info@resynth.xyz',
                     );
                     await launchUrl(emailLaunchUri);
                   },
@@ -189,7 +189,7 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
                   title: 'Github',
                   onTap: () async {
                     await launchUrl(
-                      Uri.parse('https://github.com/Begzar/BegzarApp'),
+                      Uri.parse('https://github.com/ReSynth/ReSynthApp'),
                       mode: LaunchMode.externalApplication,
                     );
                   },
@@ -200,7 +200,7 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
                   title: context.tr('telegram_channel'),
                   onTap: () async {
                     await launchUrl(
-                      Uri.parse('https://t.me/BegzarVPN'),
+                      Uri.parse('https://t.me/ReSynthVPN'),
                       mode: LaunchMode.externalApplication,
                     );
                   },

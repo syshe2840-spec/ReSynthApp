@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:begzar/common/ios_theme.dart';
+import 'package:resynth/common/ios_theme.dart';
 
 class IOSConnectionWidget extends StatefulWidget {
   const IOSConnectionWidget({

@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:begzar/common/ios_theme.dart';
+import 'package:resynth/common/ios_theme.dart';
 
 class IOSServerSelectionModal extends StatefulWidget {
   final String selectedServer;
@@ -81,7 +81,7 @@ class _IOSServerSelectionModalState extends State<IOSServerSelectionModal>
       
       if (userKey == null || userKey.isEmpty) {
         final keyResponse = await Dio().get(
-          "https://begzar-api.lastofanarchy.workers.dev/api/firebase/init/android",
+          "https://resynth-api.lastofanarchy.workers.dev/api/firebase/init/android",
           options: Options(
             headers: {'X-Content-Type-Options': 'nosniff'},
           ),
@@ -92,7 +92,7 @@ class _IOSServerSelectionModalState extends State<IOSServerSelectionModal>
       }
 
       final response = await Dio().get(
-        "https://begzar-api.lastofanarchy.workers.dev/api/firebase/init/data/$userKey",
+        "https://resynth-api.lastofanarchy.workers.dev/api/firebase/init/data/$userKey",
         options: Options(
           headers: {'X-Content-Type-Options': 'nosniff'},
         ),

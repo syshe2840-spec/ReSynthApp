@@ -32,5 +32,5 @@ jobs:
     - name: آپلود APK
       uses: actions/upload-artifact@v4
       with:
-        name: BegzarApp-release
+        name: ReSynthApp-release
         path: build/app/outputs/flutter-apk/app-release.apk

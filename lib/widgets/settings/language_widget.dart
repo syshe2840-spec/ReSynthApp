@@ -1,4 +1,4 @@
-import 'package:begzar/common/ios_theme.dart';
+import 'package:resynth/common/ios_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';

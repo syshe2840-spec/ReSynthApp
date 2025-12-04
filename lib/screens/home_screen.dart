@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
-import 'package:begzar/common/cha.dart';
-import 'package:begzar/common/http_client.dart';
-import 'package:begzar/common/secure_storage.dart';
-import 'package:begzar/common/ios_theme.dart';
-import 'package:begzar/common/encryption_helper.dart';
-import 'package:begzar/widgets/ios_connection_widget.dart';
-import 'package:begzar/widgets/ios_server_selection_modal.dart';
-import 'package:begzar/widgets/ios_vpn_card.dart';
-import 'package:begzar/widgets/ios_dialog.dart';
+import 'package:resynth/common/cha.dart';
+import 'package:resynth/common/http_client.dart';
+import 'package:resynth/common/secure_storage.dart';
+import 'package:resynth/common/ios_theme.dart';
+import 'package:resynth/common/encryption_helper.dart';
+import 'package:resynth/widgets/ios_connection_widget.dart';
+import 'package:resynth/widgets/ios_server_selection_modal.dart';
+import 'package:resynth/widgets/ios_vpn_card.dart';
+import 'package:resynth/widgets/ios_dialog.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -529,7 +529,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         blockedApps = prefs.getStringList('blockedApps') ?? [];
       });
 
-      domainName = 'begzar-api.lastofanarchy.workers.dev';
+      domainName = 'resynth-api.lastofanarchy.workers.dev';
 
       // Auto-refresh server list on first launch and every 24 hours
       String? lastUpdate = prefs.getString('last_server_update');

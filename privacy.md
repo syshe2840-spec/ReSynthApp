@@ -1,12 +1,12 @@
 # Privacy Policy
 
-## Begzar VPN Privacy Policy
+## ReSynth VPN Privacy Policy
 
-Begzar Server only facilitates the provision and sharing of free VPN servers and does not collect any personal information or sensitive data except the ones mentioned in Section 1.2.
+ReSynth Server only facilitates the provision and sharing of free VPN servers and does not collect any personal information or sensitive data except the ones mentioned in Section 1.2.
 
-> **Note 1:** Please always make sure to use official apps and follow this guide to verify the legitimacy and security of the website you are visiting while using Begzar VPN.
+> **Note 1:** Please always make sure to use official apps and follow this guide to verify the legitimacy and security of the website you are visiting while using ReSynth VPN.
 
-> **Note 2:** We strongly advise against using Begzar for sensitive tasks, such as banking or any activities that may be deemed illegal in your country, unless you are using a VPN configuration that you trust.
+> **Note 2:** We strongly advise against using ReSynth for sensitive tasks, such as banking or any activities that may be deemed illegal in your country, unless you are using a VPN configuration that you trust.
 
 ---
 
@@ -64,7 +64,7 @@ Data will be erased when:
 ---
 
 ## 7. Third-Party Services
-Using third-party services while connected to Begzar VPN is subject to their privacy policies.
+Using third-party services while connected to ReSynth VPN is subject to their privacy policies.
 
 ---
 
@@ -86,4 +86,4 @@ You can request data deletion by contacting our support via the following Telegr
 
 ---
 
-© 2025 Begzar VPN. All rights reserved.
+© 2025 ReSynth VPN. All rights reserved.

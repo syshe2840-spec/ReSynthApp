@@ -53,7 +53,7 @@ class _ServerSelectionModalState extends State<ServerSelectionModal> {
       if (userKey == null || userKey.isEmpty) {
         // دریافت User Key
         final keyResponse = await Dio().get(
-          "https://begzar-api.lastofanarchy.workers.dev/api/firebase/init/android",
+          "https://resynth-api.lastofanarchy.workers.dev/api/firebase/init/android",
           options: Options(
             headers: {'X-Content-Type-Options': 'nosniff'},
           ),
@@ -65,7 +65,7 @@ class _ServerSelectionModalState extends State<ServerSelectionModal> {
 
       // دریافت لیست سرورها
       final response = await Dio().get(
-        "https://begzar-api.lastofanarchy.workers.dev/api/firebase/init/data/$userKey",
+        "https://resynth-api.lastofanarchy.workers.dev/api/firebase/init/data/$userKey",
         options: Options(
           headers: {'X-Content-Type-Options': 'nosniff'},
         ),

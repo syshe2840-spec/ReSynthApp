@@ -15,7 +15,7 @@ plugins {
 // }
 
 android {
-    namespace = "cloud.begzar.begzar"
+    namespace = "com.resynth.vpn"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "25.1.8937393"
     
@@ -29,7 +29,7 @@ android {
     }
     
     defaultConfig {
-        applicationId = "cloud.begzar.begzar"
+        applicationId = "com.resynth.vpn"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
