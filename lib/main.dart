@@ -6,6 +6,7 @@ import 'package:resynth/screens/settings_screen.dart';
 import 'package:resynth/widgets/navigation_rail_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +23,11 @@ void main() async {
 
   // Initialize Firebase
   try {
-    await Firebase.initializeApp();
+    print('🔥 Initializing Firebase...');
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('✅ Firebase initialized!');
     // Initialize user tracking
     await FirebaseTracker.initUser();
     await FirebaseTracker.trackAppOpen();

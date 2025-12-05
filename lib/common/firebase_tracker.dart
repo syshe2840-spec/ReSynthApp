@@ -4,10 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 
 class FirebaseTracker {
-  static final FirebaseDatabase _database = FirebaseDatabase.instanceFor(
-    app: Firebase.app(),
-    databaseURL: 'https://resynth-b44bb-default-rtdb.firebaseio.com',
-  );
+  static final FirebaseDatabase _database = FirebaseDatabase.instance;
   static String? _userId;
 
   /// Initialize user tracking
