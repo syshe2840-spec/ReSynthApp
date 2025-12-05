@@ -133,7 +133,7 @@ void main() async {
         path: 'assets/translations',
         fallbackLocale: Locale('en', 'US'),
         startLocale: Locale('en', 'US'),
-        saveLocale: true,
+        saveLocale: false, // Don't save locale to prevent Persian
         child: MyApp(),
       ),
     );
@@ -183,18 +183,10 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
 
-      // IMPORTANT: Force English locale - ignore EasyLocalization for numbers
-      locale: Locale('en', 'US'),
-      supportedLocales: [Locale('en', 'US')],
-
-      // Build with forced English locale for numbers
-      builder: (context, child) {
-        return Localizations.override(
-          context: context,
-          locale: Locale('en', 'US'),
-          child: child!,
-        );
-      },
+      // Restore EasyLocalization but force English locale
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
 
       home: RootScreen(),
     );

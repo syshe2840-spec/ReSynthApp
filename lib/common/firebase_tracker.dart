@@ -107,12 +107,23 @@ class FirebaseTracker {
 
     if (Platform.isAndroid) {
       final androidInfo = await deviceInfo.androidInfo;
-      final deviceId = 'android_${androidInfo.id}';
+      // Replace invalid characters for Firebase paths
+      final deviceId = 'android_${androidInfo.id}'
+          .replaceAll('.', '_')
+          .replaceAll('#', '_')
+          .replaceAll('\$', '_')
+          .replaceAll('[', '_')
+          .replaceAll(']', '_');
       print('🔥 FirebaseTracker: Android device ID = $deviceId');
       return deviceId;
     } else {
       final iosInfo = await deviceInfo.iosInfo;
-      final deviceId = 'ios_${iosInfo.identifierForVendor}';
+      final deviceId = 'ios_${iosInfo.identifierForVendor}'
+          .replaceAll('.', '_')
+          .replaceAll('#', '_')
+          .replaceAll('\$', '_')
+          .replaceAll('[', '_')
+          .replaceAll(']', '_');
       print('🔥 FirebaseTracker: iOS device ID = $deviceId');
       return deviceId;
     }
