@@ -66,7 +66,7 @@ class _IOSServerSelectionModalState extends State<IOSServerSelectionModal>
         });
       }
     } catch (e) {
-      print('Error loading servers: $e');
+      // Silent error handling
     } finally {
       setState(() => isLoading = false);
     }

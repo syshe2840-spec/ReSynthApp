@@ -332,7 +332,6 @@ Future<Map<String, String>> getIpApi() async {
 
     return {'countryCode': 'Unknown', 'ip': 'Unknown IP'};
   } catch (e) {
-    print('Error getting IP info: $e');
     return {'countryCode': 'Error', 'ip': 'Error'};
   }
 }

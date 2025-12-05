@@ -9,14 +9,9 @@ class FirebaseTracker {
 
   /// Initialize user tracking
   static Future<void> initUser() async {
-    print('🔥 FirebaseTracker: initUser() started');
     try {
-      // Generate unique user ID based on device
       _userId = await _getDeviceId();
-      print('🔥 FirebaseTracker: Device ID = $_userId');
 
-      // Create user entry in Firebase
-      print('🔥 FirebaseTracker: Sending user data to Firebase...');
       await _database.ref('users/$_userId').set({
         'first_seen': DateTime.now().toIso8601String(),
         'last_seen': DateTime.now().toIso8601String(),
@@ -24,20 +19,13 @@ class FirebaseTracker {
         'app_version': '1.0.0',
         'status': 'active',
       });
-      print('🔥 FirebaseTracker: User data sent successfully!');
 
-      // Track in daily stats
       final today = DateTime.now().toIso8601String().split('T')[0];
-      print('🔥 FirebaseTracker: Updating daily stats for $today...');
       await _database.ref('stats/daily/$today/active_users').set(
         ServerValue.increment(1),
       );
-      print('🔥 FirebaseTracker: Daily stats updated!');
-      print('✅ FirebaseTracker: initUser() completed successfully!');
-
-    } catch (e, stackTrace) {
-      print('❌ Firebase tracking error: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
+      // Silent error handling
     }
   }
 
@@ -46,20 +34,15 @@ class FirebaseTracker {
     required String serverName,
     required bool connected,
   }) async {
-    if (_userId == null) {
-      print('⚠️ FirebaseTracker: trackConnection() called but _userId is null');
-      return;
-    }
+    if (_userId == null) return;
 
     try {
-      print('🔥 FirebaseTracker: Tracking connection - Server: $serverName, Connected: $connected');
       await _database.ref('users/$_userId').update({
         'last_seen': DateTime.now().toIso8601String(),
         'current_server': connected ? serverName : null,
         'is_connected': connected,
       });
 
-      // Track connection stats
       if (connected) {
         final today = DateTime.now().toIso8601String().split('T')[0];
         await _database.ref('stats/daily/$today/connections').set(
@@ -69,20 +52,14 @@ class FirebaseTracker {
           ServerValue.increment(1),
         );
       }
-      print('✅ FirebaseTracker: Connection tracked successfully!');
-    } catch (e, stackTrace) {
-      print('❌ Firebase tracking error: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
+      // Silent error handling
     }
   }
 
   /// Track app open
   static Future<void> trackAppOpen() async {
-    print('🔥 FirebaseTracker: trackAppOpen() started');
-    if (_userId == null) {
-      print('⚠️ FirebaseTracker: trackAppOpen() called but _userId is null');
-      return;
-    }
+    if (_userId == null) return;
 
     try {
       await _database.ref('users/$_userId').update({
@@ -93,39 +70,31 @@ class FirebaseTracker {
       await _database.ref('stats/daily/$today/app_opens').set(
         ServerValue.increment(1),
       );
-      print('✅ FirebaseTracker: trackAppOpen() completed!');
-    } catch (e, stackTrace) {
-      print('❌ Firebase tracking error: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
+      // Silent error handling
     }
   }
 
   /// Get device ID for unique user identification
   static Future<String> _getDeviceId() async {
-    print('🔥 FirebaseTracker: Getting device ID...');
     final deviceInfo = DeviceInfoPlugin();
 
     if (Platform.isAndroid) {
       final androidInfo = await deviceInfo.androidInfo;
-      // Replace invalid characters for Firebase paths
-      final deviceId = 'android_${androidInfo.id}'
+      return 'android_${androidInfo.id}'
           .replaceAll('.', '_')
           .replaceAll('#', '_')
           .replaceAll('\$', '_')
           .replaceAll('[', '_')
           .replaceAll(']', '_');
-      print('🔥 FirebaseTracker: Android device ID = $deviceId');
-      return deviceId;
     } else {
       final iosInfo = await deviceInfo.iosInfo;
-      final deviceId = 'ios_${iosInfo.identifierForVendor}'
+      return 'ios_${iosInfo.identifierForVendor}'
           .replaceAll('.', '_')
           .replaceAll('#', '_')
           .replaceAll('\$', '_')
           .replaceAll('[', '_')
           .replaceAll(']', '_');
-      print('🔥 FirebaseTracker: iOS device ID = $deviceId');
-      return deviceId;
     }
   }
 
@@ -149,7 +118,6 @@ class FirebaseTracker {
 
       return count;
     } catch (e) {
-      print('Error getting active users: $e');
       return 0;
     }
   }

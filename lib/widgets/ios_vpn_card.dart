@@ -325,7 +325,6 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
 
   // Convert Persian/Arabic digits to English
   String toEnglishDigits(String input) {
-    print('🔢 toEnglishDigits INPUT: $input');
     const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
     const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
@@ -335,31 +334,26 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
       result = result.replaceAll(persian[i], english[i]);
       result = result.replaceAll(arabic[i], english[i]);
     }
-    print('🔢 toEnglishDigits OUTPUT: $result');
     return result;
   }
 
   // Format for real-time speed - always shows MB/s with English numbers
   String formatBytes(int bytes) {
-    print('📊 formatBytes called with: $bytes');
     if (bytes <= 0) return '0.00 MB/s';
     const int mb = 1024 * 1024;
     double megabytes = bytes / mb;
-    // Direct formatting without locale
     String result = megabytes.toStringAsFixed(2);
     result = toEnglishDigits(result);
-    print('📊 formatBytes result: $result MB/s');
     return '$result MB/s';
   }
 
   // Format for total usage - auto-scales without /s with English numbers
   String formatSpeedBytes(int bytes) {
-    print('📊 formatSpeedBytes called with: $bytes');
     if (bytes <= 0) return '0 B';
     const int kb = 1024;
     const int mb = kb * 1024;
     const int gb = mb * 1024;
-    
+
     String result;
     if (bytes < kb) {
       result = toEnglishDigits('$bytes') + ' B';
@@ -370,7 +364,6 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
     } else {
       result = toEnglishDigits((bytes / gb).toStringAsFixed(2)) + ' GB';
     }
-    print('📊 formatSpeedBytes result: $result');
     return result;
   }
 }

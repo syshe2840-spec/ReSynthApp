@@ -176,7 +176,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
 String _toEnglishDigits(String input) {
-  print("[NUMBER] home_screen toEnglishDigits INPUT: $input");
   const english = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
   const persian = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
   const arabic = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
@@ -185,7 +184,6 @@ String _toEnglishDigits(String input) {
     result = result.replaceAll(persian[i], english[i]);
     result = result.replaceAll(arabic[i], english[i]);
   }
-  print("[NUMBER] home_screen toEnglishDigits OUTPUT: $result");
   return result;
 }
 

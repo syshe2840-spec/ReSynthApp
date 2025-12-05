@@ -15,10 +15,6 @@ import 'package:flutter/foundation.dart'
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    print('[FIREBASE_OPTIONS] Getting current platform options...');
-    print('[FIREBASE_OPTIONS] kIsWeb: $kIsWeb');
-    print('[FIREBASE_OPTIONS] defaultTargetPlatform: $defaultTargetPlatform');
-    
     if (kIsWeb) {
       throw UnsupportedError(
         'DefaultFirebaseOptions have not been configured for web - '
@@ -27,10 +23,8 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        print('[FIREBASE_OPTIONS] Returning Android options');
         return android;
       case TargetPlatform.iOS:
-        print('[FIREBASE_OPTIONS] Returning iOS options');
         return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(

@@ -1,5 +1,7 @@
 import 'package:resynth/common/ios_theme.dart';
 import 'package:resynth/common/firebase_tracker.dart';
+import 'package:resynth/common/firebase_messaging_service.dart';
+import 'package:resynth/common/firebase_remote_config_service.dart';
 import 'package:resynth/screens/about_screen.dart';
 import 'package:resynth/screens/home_screen.dart';
 import 'package:resynth/screens/settings_screen.dart';
@@ -16,113 +18,45 @@ import 'package:safe_device/safe_device.dart';
 import 'package:intl/intl.dart';
 
 void main() async {
-  print('═══════════════════════════════════════════════════');
-  print('🚀 [MAIN] APP STARTING - main() called');
-  print('═══════════════════════════════════════════════════');
-  
-  print('[MAIN] Step 1: Initializing WidgetsFlutterBinding...');
-  try {
-    WidgetsFlutterBinding.ensureInitialized();
-    print('✅ [MAIN] WidgetsFlutterBinding initialized successfully');
-  } catch (e) {
-    print('❌ [MAIN] WidgetsFlutterBinding FAILED: $e');
-    return;
-  }
+  WidgetsFlutterBinding.ensureInitialized();
 
   // Force English locale for numbers
-  print('[MAIN] Step 2: Setting locale to en_US...');
-  try {
-    Intl.defaultLocale = 'en_US';
-    print('✅ [MAIN] Locale set to: ${Intl.defaultLocale}');
-  } catch (e) {
-    print('❌ [MAIN] Locale setting FAILED: $e');
-  }
+  Intl.defaultLocale = 'en_US';
 
   // Initialize Firebase
-  print('═══════════════════════════════════════════════════');
-  print('🔥 [FIREBASE] Starting Firebase initialization...');
-  print('═══════════════════════════════════════════════════');
   try {
-    print('[FIREBASE] Step 3a: Checking if Firebase already initialized...');
-
-    // Check if Firebase is already initialized
     if (Firebase.apps.isEmpty) {
-      print('[FIREBASE] Firebase NOT initialized yet - proceeding...');
       try {
-        print('[FIREBASE] Step 3b: Getting Firebase options...');
         final options = DefaultFirebaseOptions.currentPlatform;
-        print('[FIREBASE] Options received:');
-        print('  - Project ID: ${options.projectId}');
-        print('  - App ID: ${options.appId}');
-        print('  - API Key: ${options.apiKey}');
-        print('  - Database URL: ${options.databaseURL}');
-
-        print('[FIREBASE] Step 3c: Calling Firebase.initializeApp()...');
         await Firebase.initializeApp(options: options);
-        print('✅ [FIREBASE] Firebase.initializeApp() completed!');
       } catch (e) {
-        // Handle duplicate app error gracefully
-        if (e.toString().contains('duplicate-app')) {
-          print('⚠️ [FIREBASE] Firebase was already initialized (duplicate-app), continuing...');
-        } else {
-          rethrow; // Re-throw if it's a different error
+        if (!e.toString().contains('duplicate-app')) {
+          rethrow;
         }
       }
-    } else {
-      print('✅ [FIREBASE] Firebase already initialized (${Firebase.apps.length} apps found) - skipping');
     }
 
-    print('[FIREBASE] Step 4: Initializing user tracking...');
+    // Initialize all Firebase services
     await FirebaseTracker.initUser();
-    print('✅ [FIREBASE] FirebaseTracker.initUser() completed!');
-
-    print('[FIREBASE] Step 5: Tracking app open...');
     await FirebaseTracker.trackAppOpen();
-    print('✅ [FIREBASE] FirebaseTracker.trackAppOpen() completed!');
-
-    print('═══════════════════════════════════════════════════');
-    print('✅✅✅ [FIREBASE] ALL FIREBASE STEPS COMPLETED! ✅✅✅');
-    print('═══════════════════════════════════════════════════');
-  } catch (e, stackTrace) {
-    print('═══════════════════════════════════════════════════');
-    print('❌❌❌ [FIREBASE] INITIALIZATION FAILED! ❌❌❌');
-    print('Error: $e');
-    print('Stack trace:');
-    print(stackTrace);
-    print('═══════════════════════════════════════════════════');
+    await FirebaseMessagingService.initialize();
+    await FirebaseRemoteConfigService.initialize();
+  } catch (e) {
+    // Silent error handling
   }
 
-  print('[MAIN] Step 6: Checking SafeDevice...');
   bool isJailBroken = await SafeDevice.isJailBroken;
-  print('[MAIN] SafeDevice check: isJailBroken = $isJailBroken');
   if (isJailBroken != true) {
-    print('[MAIN] Device is NOT jailbroken - continuing...');
-    
-    print('[MAIN] Step 7: Initializing EasyLocalization...');
-    try {
-      await EasyLocalization.ensureInitialized();
-      print('✅ [MAIN] EasyLocalization initialized');
-    } catch (e) {
-      print('❌ [MAIN] EasyLocalization FAILED: $e');
-    }
-    
-    print('[MAIN] Step 8: Setting system UI style...');
-    try {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: IOSColors.systemBackground,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ));
-      print('✅ [MAIN] System UI style set');
-    } catch (e) {
-      print('❌ [MAIN] System UI style FAILED: $e');
-    }
-    
-    print('═══════════════════════════════════════════════════');
-    print('🚀 [MAIN] Step 9: Running app...');
-    print('═══════════════════════════════════════════════════');
+    await EasyLocalization.ensureInitialized();
+
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: IOSColors.systemBackground,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ));
+
     runApp(
       EasyLocalization(
         supportedLocales: [
@@ -133,14 +67,10 @@ void main() async {
         path: 'assets/translations',
         fallbackLocale: Locale('en', 'US'),
         startLocale: Locale('en', 'US'),
-        saveLocale: false, // Don't save locale to prevent Persian
+        saveLocale: false,
         child: MyApp(),
       ),
     );
-  } else {
-    print('═══════════════════════════════════════════════════');
-    print('❌ [MAIN] Device is JAILBROKEN - App will not run!');
-    print('═══════════════════════════════════════════════════');
   }
 }
 
