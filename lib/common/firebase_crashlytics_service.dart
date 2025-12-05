@@ -74,7 +74,7 @@ class FirebaseCrashlyticsService {
   /// Check if crashlytics is enabled
   static Future<bool> isCrashlyticsCollectionEnabled() async {
     try {
-      return await _crashlytics.isCrashlyticsCollectionEnabled();
+      return _crashlytics.isCrashlyticsCollectionEnabled;
     } catch (e) {
       return false;
     }
