@@ -16,38 +16,96 @@ import 'package:safe_device/safe_device.dart';
 import 'package:intl/intl.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Force English locale for numbers
-  Intl.defaultLocale = 'en_US';
-
-  // Initialize Firebase
+  print('═══════════════════════════════════════════════════');
+  print('🚀 [MAIN] APP STARTING - main() called');
+  print('═══════════════════════════════════════════════════');
+  
+  print('[MAIN] Step 1: Initializing WidgetsFlutterBinding...');
   try {
-    print('🔥 Initializing Firebase...');
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print('✅ Firebase initialized!');
-    // Initialize user tracking
-    await FirebaseTracker.initUser();
-    await FirebaseTracker.trackAppOpen();
+    WidgetsFlutterBinding.ensureInitialized();
+    print('✅ [MAIN] WidgetsFlutterBinding initialized successfully');
   } catch (e) {
-    print('Firebase initialization error: $e');
+    print('❌ [MAIN] WidgetsFlutterBinding FAILED: $e');
+    return;
   }
 
+  // Force English locale for numbers
+  print('[MAIN] Step 2: Setting locale to en_US...');
+  try {
+    Intl.defaultLocale = 'en_US';
+    print('✅ [MAIN] Locale set to: ${Intl.defaultLocale}');
+  } catch (e) {
+    print('❌ [MAIN] Locale setting FAILED: $e');
+  }
+
+  // Initialize Firebase
+  print('═══════════════════════════════════════════════════');
+  print('🔥 [FIREBASE] Starting Firebase initialization...');
+  print('═══════════════════════════════════════════════════');
+  try {
+    print('[FIREBASE] Step 3a: Getting Firebase options...');
+    final options = DefaultFirebaseOptions.currentPlatform;
+    print('[FIREBASE] Options received:');
+    print('  - Project ID: ${options.projectId}');
+    print('  - App ID: ${options.appId}');
+    print('  - API Key: ${options.apiKey}');
+    print('  - Database URL: ${options.databaseURL}');
+    
+    print('[FIREBASE] Step 3b: Calling Firebase.initializeApp()...');
+    await Firebase.initializeApp(options: options);
+    print('✅ [FIREBASE] Firebase.initializeApp() completed!');
+    
+    print('[FIREBASE] Step 4: Initializing user tracking...');
+    await FirebaseTracker.initUser();
+    print('✅ [FIREBASE] FirebaseTracker.initUser() completed!');
+    
+    print('[FIREBASE] Step 5: Tracking app open...');
+    await FirebaseTracker.trackAppOpen();
+    print('✅ [FIREBASE] FirebaseTracker.trackAppOpen() completed!');
+    
+    print('═══════════════════════════════════════════════════');
+    print('✅✅✅ [FIREBASE] ALL FIREBASE STEPS COMPLETED! ✅✅✅');
+    print('═══════════════════════════════════════════════════');
+  } catch (e, stackTrace) {
+    print('═══════════════════════════════════════════════════');
+    print('❌❌❌ [FIREBASE] INITIALIZATION FAILED! ❌❌❌');
+    print('Error: $e');
+    print('Stack trace:');
+    print(stackTrace);
+    print('═══════════════════════════════════════════════════');
+  }
+
+  print('[MAIN] Step 6: Checking SafeDevice...');
   bool isJailBroken = await SafeDevice.isJailBroken;
+  print('[MAIN] SafeDevice check: isJailBroken = $isJailBroken');
   if (isJailBroken != true) {
-    await EasyLocalization.ensureInitialized();
+    print('[MAIN] Device is NOT jailbroken - continuing...');
     
-    // iOS-style system UI
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
-      systemNavigationBarColor: IOSColors.systemBackground,
-      systemNavigationBarIconBrightness: Brightness.dark,
-    ));
+    print('[MAIN] Step 7: Initializing EasyLocalization...');
+    try {
+      await EasyLocalization.ensureInitialized();
+      print('✅ [MAIN] EasyLocalization initialized');
+    } catch (e) {
+      print('❌ [MAIN] EasyLocalization FAILED: $e');
+    }
     
+    print('[MAIN] Step 8: Setting system UI style...');
+    try {
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: IOSColors.systemBackground,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ));
+      print('✅ [MAIN] System UI style set');
+    } catch (e) {
+      print('❌ [MAIN] System UI style FAILED: $e');
+    }
+    
+    print('═══════════════════════════════════════════════════');
+    print('🚀 [MAIN] Step 9: Running app...');
+    print('═══════════════════════════════════════════════════');
     runApp(
       EasyLocalization(
         supportedLocales: [
@@ -62,6 +120,10 @@ void main() async {
         child: MyApp(),
       ),
     );
+  } else {
+    print('═══════════════════════════════════════════════════');
+    print('❌ [MAIN] Device is JAILBROKEN - App will not run!');
+    print('═══════════════════════════════════════════════════');
   }
 }
 
@@ -241,5 +303,9 @@ class _RootScreenState extends State<RootScreen> {
         ),
       ),
     );
+  } else {
+    print('═══════════════════════════════════════════════════');
+    print('❌ [MAIN] Device is JAILBROKEN - App will not run!');
+    print('═══════════════════════════════════════════════════');
   }
 }
