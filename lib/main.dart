@@ -48,19 +48,28 @@ void main() async {
     // Check if Firebase is already initialized
     if (Firebase.apps.isEmpty) {
       print('[FIREBASE] Firebase NOT initialized yet - proceeding...');
-      print('[FIREBASE] Step 3b: Getting Firebase options...');
-      final options = DefaultFirebaseOptions.currentPlatform;
-      print('[FIREBASE] Options received:');
-      print('  - Project ID: ${options.projectId}');
-      print('  - App ID: ${options.appId}');
-      print('  - API Key: ${options.apiKey}');
-      print('  - Database URL: ${options.databaseURL}');
+      try {
+        print('[FIREBASE] Step 3b: Getting Firebase options...');
+        final options = DefaultFirebaseOptions.currentPlatform;
+        print('[FIREBASE] Options received:');
+        print('  - Project ID: ${options.projectId}');
+        print('  - App ID: ${options.appId}');
+        print('  - API Key: ${options.apiKey}');
+        print('  - Database URL: ${options.databaseURL}');
 
-      print('[FIREBASE] Step 3c: Calling Firebase.initializeApp()...');
-      await Firebase.initializeApp(options: options);
-      print('✅ [FIREBASE] Firebase.initializeApp() completed!');
+        print('[FIREBASE] Step 3c: Calling Firebase.initializeApp()...');
+        await Firebase.initializeApp(options: options);
+        print('✅ [FIREBASE] Firebase.initializeApp() completed!');
+      } catch (e) {
+        // Handle duplicate app error gracefully
+        if (e.toString().contains('duplicate-app')) {
+          print('⚠️ [FIREBASE] Firebase was already initialized (duplicate-app), continuing...');
+        } else {
+          rethrow; // Re-throw if it's a different error
+        }
+      }
     } else {
-      print('✅ [FIREBASE] Firebase already initialized - skipping');
+      print('✅ [FIREBASE] Firebase already initialized (${Firebase.apps.length} apps found) - skipping');
     }
 
     print('[FIREBASE] Step 4: Initializing user tracking...');
