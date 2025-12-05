@@ -1,0 +1,21 @@
+--- a/lib/widgets/ios_vpn_card.dart
++++ b/lib/widgets/ios_vpn_card.dart
+@@ -1,5 +1,6 @@
+ import 'dart:async';
+ import 'package:resynth/common/ios_theme.dart';
++import 'package:intl/intl.dart';
+ import 'package:flutter/cupertino.dart';
+ import 'package:flutter/material.dart';
+ import 'package:flutter_v2ray/flutter_v2ray.dart';
+@@ -341,9 +342,11 @@ class IOSVpnCard extends StatelessWidget {
+   String formatBytes(int bytes) {
+     if (bytes <= 0) return '0.00 MB/s';
+     const int mb = 1024 * 1024;
+     double megabytes = bytes / mb;
+-    // Always convert to English digits
+-    String result = megabytes.toStringAsFixed(2);
++    // Use NumberFormat with en_US locale to ensure English numbers
++    final formatter = NumberFormat('0.00', 'en_US');
++    String result = formatter.format(megabytes);
+     return '${toEnglishDigits(result)} MB/s';
+   }

@@ -49,17 +49,30 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
   }
 
   String _toEnglishDigits(String input) {
-    const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-    const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-    const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-
-    String result = input;
+    print("[NUMBER] about_screen toEnglishDigits INPUT: $input");
+    const english = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    const persian = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+    const arabic = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+    String result = input.toString();
     for (int i = 0; i < 10; i++) {
       result = result.replaceAll(persian[i], english[i]);
       result = result.replaceAll(arabic[i], english[i]);
     }
+    print("[NUMBER] about_screen toEnglishDigits OUTPUT: $result");
     return result;
   }
+
+
+
+
+
+
+
+
+
+
+
+
 
   Future<void> _getVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();

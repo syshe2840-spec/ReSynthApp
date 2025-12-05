@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:dio/dio.dart';
-import 'package:easy_localization/easy_localization.dart' ;
+import 'package:easy_localization/easy_localization.dart' hide NumberFormat;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -325,53 +325,49 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
 
   // Convert Persian/Arabic digits to English
   String toEnglishDigits(String input) {
-    print('🔢 toEnglishDigits INPUT: $input');
     const english = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
     const arabic = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
 
-    String result = input.toString();
+    String result = input;
     for (int i = 0; i < 10; i++) {
       result = result.replaceAll(persian[i], english[i]);
       result = result.replaceAll(arabic[i], english[i]);
     }
-    print('🔢 toEnglishDigits OUTPUT: $result');
     return result;
   }
 
   // Format for real-time speed - always shows MB/s with English numbers
   String formatBytes(int bytes) {
-    print('📊 formatBytes called with: $bytes');
     if (bytes <= 0) return '0.00 MB/s';
     const int mb = 1024 * 1024;
     double megabytes = bytes / mb;
-    // Direct formatting without locale
+    // Always convert to English digits
     String result = megabytes.toStringAsFixed(2);
-    result = toEnglishDigits(result);
-    print('📊 formatBytes result: $result MB/s');
-    return '$result MB/s';
+    return '${toEnglishDigits(result)} MB/s';
   }
 
   // Format for total usage - auto-scales without /s with English numbers
   String formatSpeedBytes(int bytes) {
-    print('📊 formatSpeedBytes called with: $bytes');
     if (bytes <= 0) return '0 B';
     const int kb = 1024;
     const int mb = kb * 1024;
     const int gb = mb * 1024;
-    
-    String result;
+
+    // Always convert to English digits
     if (bytes < kb) {
-      result = toEnglishDigits('$bytes') + ' B';
-    } else if (bytes < mb) {
-      result = toEnglishDigits((bytes / kb).toStringAsFixed(1)) + ' KB';
-    } else if (bytes < gb) {
-      result = toEnglishDigits((bytes / mb).toStringAsFixed(1)) + ' MB';
-    } else {
-      result = toEnglishDigits((bytes / gb).toStringAsFixed(2)) + ' GB';
+      return '${toEnglishDigits('$bytes')} B';
     }
-    print('📊 formatSpeedBytes result: $result');
-    return result;
+    if (bytes < mb) {
+      String result = (bytes / kb).toStringAsFixed(1);
+      return '${toEnglishDigits(result)} KB';
+    }
+    if (bytes < gb) {
+      String result = (bytes / mb).toStringAsFixed(1);
+      return '${toEnglishDigits(result)} MB';
+    }
+    String result = (bytes / gb).toStringAsFixed(2);
+    return '${toEnglishDigits(result)} GB';
   }
 }
 
