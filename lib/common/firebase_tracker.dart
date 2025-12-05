@@ -1,9 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 
 class FirebaseTracker {
-  static final FirebaseDatabase _database = FirebaseDatabase.instance;
+  static final FirebaseDatabase _database = FirebaseDatabase.instanceFor(
+    app: Firebase.app(),
+    databaseURL: 'https://resynth-b44bb-default-rtdb.firebaseio.com',
+  );
   static String? _userId;
 
   /// Initialize user tracking
