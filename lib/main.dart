@@ -303,9 +303,5 @@ class _RootScreenState extends State<RootScreen> {
         ),
       ),
     );
-  } else {
-    print('═══════════════════════════════════════════════════');
-    print('❌ [MAIN] Device is JAILBROKEN - App will not run!');
-    print('═══════════════════════════════════════════════════');
   }
 }
