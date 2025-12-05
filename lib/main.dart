@@ -2,6 +2,10 @@ import 'package:resynth/common/ios_theme.dart';
 import 'package:resynth/common/firebase_tracker.dart';
 import 'package:resynth/common/firebase_messaging_service.dart';
 import 'package:resynth/common/firebase_remote_config_service.dart';
+import 'package:resynth/common/firebase_analytics_service.dart';
+import 'package:resynth/common/firebase_crashlytics_service.dart';
+import 'package:resynth/common/firebase_performance_service.dart';
+import 'package:resynth/common/firebase_firestore_service.dart';
 import 'package:resynth/screens/about_screen.dart';
 import 'package:resynth/screens/home_screen.dart';
 import 'package:resynth/screens/settings_screen.dart';
@@ -37,10 +41,15 @@ void main() async {
     }
 
     // Initialize all Firebase services
+    await FirebaseCrashlyticsService.initialize();
+    await FirebaseAnalyticsService.initialize();
+    await FirebasePerformanceService.initialize();
+    await FirebaseFirestoreService.initialize();
     await FirebaseTracker.initUser();
     await FirebaseTracker.trackAppOpen();
     await FirebaseMessagingService.initialize();
     await FirebaseRemoteConfigService.initialize();
+    await FirebaseAnalyticsService.logAppOpen();
   } catch (e) {
     // Silent error handling
   }
@@ -97,6 +106,9 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'ReSynth VPN',
       debugShowCheckedModeBanner: false,
+      navigatorObservers: [
+        FirebaseAnalyticsService.observer,
+      ],
 
       // iOS Theme
       theme: IOSTheme.lightTheme.copyWith(

@@ -35,13 +35,18 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- Disable Firebase auto-initialization -->
+        <!-- Enable Firebase Analytics -->
         <meta-data
-            android:name="firebase_analytics_collection_deactivated"
+            android:name="firebase_analytics_collection_enabled"
             android:value="true" />
         <meta-data
             android:name="google_analytics_automatic_screen_reporting_enabled"
-            android:value="false" />
+            android:value="true" />
+
+        <!-- Crashlytics -->
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="true" />
 
         <!-- Firebase Messaging Service -->
         <service
