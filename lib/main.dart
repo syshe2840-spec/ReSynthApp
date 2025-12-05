@@ -43,26 +43,34 @@ void main() async {
   print('🔥 [FIREBASE] Starting Firebase initialization...');
   print('═══════════════════════════════════════════════════');
   try {
-    print('[FIREBASE] Step 3a: Getting Firebase options...');
-    final options = DefaultFirebaseOptions.currentPlatform;
-    print('[FIREBASE] Options received:');
-    print('  - Project ID: ${options.projectId}');
-    print('  - App ID: ${options.appId}');
-    print('  - API Key: ${options.apiKey}');
-    print('  - Database URL: ${options.databaseURL}');
-    
-    print('[FIREBASE] Step 3b: Calling Firebase.initializeApp()...');
-    await Firebase.initializeApp(options: options);
-    print('✅ [FIREBASE] Firebase.initializeApp() completed!');
-    
+    print('[FIREBASE] Step 3a: Checking if Firebase already initialized...');
+
+    // Check if Firebase is already initialized
+    if (Firebase.apps.isEmpty) {
+      print('[FIREBASE] Firebase NOT initialized yet - proceeding...');
+      print('[FIREBASE] Step 3b: Getting Firebase options...');
+      final options = DefaultFirebaseOptions.currentPlatform;
+      print('[FIREBASE] Options received:');
+      print('  - Project ID: ${options.projectId}');
+      print('  - App ID: ${options.appId}');
+      print('  - API Key: ${options.apiKey}');
+      print('  - Database URL: ${options.databaseURL}');
+
+      print('[FIREBASE] Step 3c: Calling Firebase.initializeApp()...');
+      await Firebase.initializeApp(options: options);
+      print('✅ [FIREBASE] Firebase.initializeApp() completed!');
+    } else {
+      print('✅ [FIREBASE] Firebase already initialized - skipping');
+    }
+
     print('[FIREBASE] Step 4: Initializing user tracking...');
     await FirebaseTracker.initUser();
     print('✅ [FIREBASE] FirebaseTracker.initUser() completed!');
-    
+
     print('[FIREBASE] Step 5: Tracking app open...');
     await FirebaseTracker.trackAppOpen();
     print('✅ [FIREBASE] FirebaseTracker.trackAppOpen() completed!');
-    
+
     print('═══════════════════════════════════════════════════');
     print('✅✅✅ [FIREBASE] ALL FIREBASE STEPS COMPLETED! ✅✅✅');
     print('═══════════════════════════════════════════════════');
@@ -146,11 +154,11 @@ class _MyAppState extends State<MyApp> {
       fontFamily: 'sm',
       color: IOSColors.label,
     );
-    
+
     return MaterialApp(
       title: 'ReSynth VPN',
       debugShowCheckedModeBanner: false,
-      
+
       // iOS Theme
       theme: IOSTheme.lightTheme.copyWith(
         textTheme: TextTheme(
@@ -165,10 +173,11 @@ class _MyAppState extends State<MyApp> {
           labelSmall: defaultTextStyle.copyWith(fontSize: 13, fontWeight: FontWeight.w400),
         ),
       ),
-      
+
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
-      locale: context.locale,
+      // FORCE ENGLISH LOCALE FOR NUMBERS - This prevents Persian number conversion
+      locale: Locale('en', 'US'),
       home: RootScreen(),
     );
   }
