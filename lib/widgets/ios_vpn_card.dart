@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:dio/dio.dart';
-import 'package:easy_localization/easy_localization.dart' hide NumberFormat;
+import 'package:easy_localization/easy_localization.dart' ;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -342,8 +342,8 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
     if (bytes <= 0) return '0.00 MB/s';
     const int mb = 1024 * 1024;
     double megabytes = bytes / mb;
-    // Always convert to English digits
-    String result = megabytes.toStringAsFixed(2);
+    final formatter = NumberFormat('0.00', 'en_US');
+    String result = formatter.format(megabytes);
     return '${toEnglishDigits(result)} MB/s';
   }
 
@@ -353,20 +353,20 @@ class _IOSVpnCardState extends State<IOSVpnCard> {
     const int kb = 1024;
     const int mb = kb * 1024;
     const int gb = mb * 1024;
-
-    // Always convert to English digits
+    final formatter1 = NumberFormat('0.0', 'en_US');
+    final formatter2 = NumberFormat('0.00', 'en_US');
     if (bytes < kb) {
       return '${toEnglishDigits('$bytes')} B';
     }
     if (bytes < mb) {
-      String result = (bytes / kb).toStringAsFixed(1);
+      String result = formatter1.format(bytes / kb);
       return '${toEnglishDigits(result)} KB';
     }
     if (bytes < gb) {
-      String result = (bytes / mb).toStringAsFixed(1);
+      String result = formatter1.format(bytes / mb);
       return '${toEnglishDigits(result)} MB';
     }
-    String result = (bytes / gb).toStringAsFixed(2);
+    String result = formatter2.format(bytes / gb);
     return '${toEnglishDigits(result)} GB';
   }
 }
