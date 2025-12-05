@@ -183,10 +183,19 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
 
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      // FORCE ENGLISH LOCALE FOR NUMBERS - This prevents Persian number conversion
+      // IMPORTANT: Force English locale - ignore EasyLocalization for numbers
       locale: Locale('en', 'US'),
+      supportedLocales: [Locale('en', 'US')],
+
+      // Build with forced English locale for numbers
+      builder: (context, child) {
+        return Localizations.override(
+          context: context,
+          locale: Locale('en', 'US'),
+          child: child!,
+        );
+      },
+
       home: RootScreen(),
     );
   }
