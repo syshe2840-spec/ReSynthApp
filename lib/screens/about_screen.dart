@@ -196,17 +196,6 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
                 ),
 
                 _buildContactCard(
-                  icon: CupertinoIcons.square_stack_3d_up,
-                  title: 'Github',
-                  onTap: () async {
-                    await launchUrl(
-                      Uri.parse('https://github.com/ReSynth/ReSynthApp'),
-                      mode: LaunchMode.externalApplication,
-                    );
-                  },
-                ),
-
-                _buildContactCard(
                   icon: CupertinoIcons.chat_bubble,
                   title: context.tr('telegram_channel'),
                   onTap: () async {
@@ -219,38 +208,12 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
 
                 const SizedBox(height: 30),
 
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Text(
-                    context.tr('about_description'),
-                    style: TextStyle(
-                      fontSize: 14,
-                      height: 1.6,
-                      color: IOSColors.secondaryLabel,
-                      fontWeight: FontWeight.w400,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-
-                const SizedBox(height: 24),
-
                 Text(
-                  _toEnglishDigits(context.tr('copyright')),
+                  'Developed with ❤️ 2024',
                   style: TextStyle(
-                    fontSize: 12,
-                    color: IOSColors.tertiaryLabel,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: IOSColors.secondaryLabel,
                   ),
                   textAlign: TextAlign.center,
                 ),
