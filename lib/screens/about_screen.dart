@@ -171,7 +171,7 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
                   title: 'TON Wallet',
                   onTap: () {
                     Clipboard.setData(const ClipboardData(
-                      text: "UQDrQ59AyNvwH96R7wHl8-VqVFhWqoliujMpelbs2aR-LWr1"
+                      text: "UQDMJMArRGsbMrgq1B95mGIKfdkJfBT9uXJL2RZcLEFQpn9I"
                     )).then((_) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -185,11 +185,11 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
 
                 _buildContactCard(
                   icon: CupertinoIcons.mail,
-                  title: 'info@resynth.xyz',
+                  title: 'ReSynthVpn@protonmail.com',
                   onTap: () async {
                     final Uri emailLaunchUri = Uri(
                       scheme: 'mailto',
-                      path: 'info@resynth.xyz',
+                      path: 'ReSynthVpn@protonmail.com',
                     );
                     await launchUrl(emailLaunchUri);
                   },
