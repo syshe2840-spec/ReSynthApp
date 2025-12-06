@@ -7,8 +7,10 @@ import 'package:resynth/common/firebase_crashlytics_service.dart';
 import 'package:resynth/common/firebase_performance_service.dart';
 import 'package:resynth/common/firebase_firestore_service.dart';
 import 'package:resynth/screens/about_screen.dart';
+import 'package:resynth/screens/app_initializer.dart';
 import 'package:resynth/screens/home_screen.dart';
 import 'package:resynth/screens/settings_screen.dart';
+import 'package:resynth/screens/splash_screen.dart';
 import 'package:resynth/widgets/navigation_rail_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -27,7 +29,7 @@ void main() async {
   // Force English locale for numbers
   Intl.defaultLocale = 'en_US';
 
-  // Initialize Firebase
+  // Initialize Firebase Core only (fast!)
   try {
     if (Firebase.apps.isEmpty) {
       try {
@@ -39,17 +41,6 @@ void main() async {
         }
       }
     }
-
-    // Initialize all Firebase services
-    await FirebaseCrashlyticsService.initialize();
-    await FirebaseAnalyticsService.initialize();
-    await FirebasePerformanceService.initialize();
-    await FirebaseFirestoreService.initialize();
-    await FirebaseTracker.initUser();
-    await FirebaseTracker.trackAppOpen();
-    await FirebaseMessagingService.initialize();
-    await FirebaseRemoteConfigService.initialize();
-    await FirebaseAnalyticsService.logAppOpen();
   } catch (e) {
     // Silent error handling
   }
@@ -130,7 +121,9 @@ class _MyAppState extends State<MyApp> {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
 
-      home: RootScreen(),
+      home: AppInitializer(
+        child: RootScreen(),
+      ),
     );
   }
 }
