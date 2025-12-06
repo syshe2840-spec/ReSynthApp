@@ -209,7 +209,7 @@ class _AboutScreenState extends State<AboutScreen> with SingleTickerProviderStat
                 const SizedBox(height: 30),
 
                 Text(
-                  'Developed with ❤️ 2024',
+                  'Developed with ❤️ 2025',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
