@@ -28,7 +28,7 @@ class _AppInitializerState extends State<AppInitializer> {
 
   Future<void> _initializeApp() async {
     try {
-      // Initialize all Firebase services in parallel
+      // Initialize all Firebase services with 3 second timeout
       await Future.wait([
         FirebaseCrashlyticsService.initialize(),
         FirebaseAnalyticsService.initialize(),
@@ -36,17 +36,30 @@ class _AppInitializerState extends State<AppInitializer> {
         FirebaseFirestoreService.initialize(),
         FirebaseMessagingService.initialize(),
         FirebaseRemoteConfigService.initialize(),
-      ]);
+      ]).timeout(
+        const Duration(seconds: 3),
+        onTimeout: () {
+          // Timeout - continue without Firebase
+          return [];
+        },
+      );
 
-      // Initialize user tracking
-      await FirebaseTracker.initUser();
-      await FirebaseTracker.trackAppOpen();
-      await FirebaseAnalyticsService.logAppOpen();
+      // Initialize user tracking with timeout
+      await Future.wait([
+        FirebaseTracker.initUser(),
+        FirebaseTracker.trackAppOpen(),
+        FirebaseAnalyticsService.logAppOpen(),
+      ]).timeout(
+        const Duration(seconds: 2),
+        onTimeout: () {
+          return [];
+        },
+      );
     } catch (e) {
-      // Silent error handling
+      // Silent error handling - app will still work
     }
 
-    // Mark as initialized
+    // Mark as initialized - app will start even if Firebase failed
     if (mounted) {
       setState(() {
         _initialized = true;
